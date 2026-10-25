@@ -5,6 +5,8 @@ import { getKalam } from "@/lib/data";
 import { Reader } from "@/components/reader";
 import { MediaPlayer } from "@/components/media-player";
 import { siteUrl } from "@/lib/config";
+import { publishedMeanings } from "@/lib/meaning-data";
+export const dynamic = "force-dynamic";
 export async function generateMetadata({
   params,
 }: {
@@ -35,6 +37,7 @@ export default async function KalamPage({
   const { slug } = await params;
   const k = await getKalam(slug);
   if (!k) notFound();
+  const meanings = await publishedMeanings(k.id, k.texts);
   const title =
     (k.texts.find((t) => t.language === "en") || k.texts[0])?.title || k.slug;
   const json = {
@@ -66,7 +69,7 @@ export default async function KalamPage({
         {k.poet && <Link href={`/artists/${k.poet.slug}`}>{k.poet.name}</Link>}
         <p>{k.summary}</p>
       </header>
-      <Reader texts={k.texts} />
+      <Reader texts={k.texts} meanings={meanings} />
       {k.media.length > 0 && (
         <section className="section">
           <h2>Listen & watch</h2>

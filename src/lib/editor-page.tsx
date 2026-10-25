@@ -1,4 +1,5 @@
 import { notFound } from "next/navigation";
+import Link from "next/link";
 import { z } from "zod";
 import { requireStaff } from "./auth";
 import {
@@ -85,6 +86,13 @@ export async function renderEditor(
               : "kalam"}
         </h1>
       </div>
+      {kind === "kalam" && id !== "new" && (
+        <p className="notice">
+          <Link href={`/admin/kalam/${id}/meanings`}>
+            Manage reviewed word meanings →
+          </Link>
+        </p>
+      )}
       <Editor
         key={id}
         kind={kind}

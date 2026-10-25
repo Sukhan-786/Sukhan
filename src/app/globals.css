@@ -3083,3 +3083,150 @@ footer .demo-banner {
   max-width: 100%;
   font: 14px/1.6 var(--sans);
 }
+
+.meaning-hint {
+  padding: 0 20px;
+  color: #62534d;
+  font-size: 14px;
+}
+.poem .meaning-word {
+  font: inherit;
+  color: inherit;
+  background: transparent;
+  border: 0;
+  padding: 0;
+  text-decoration: underline dotted;
+  text-underline-offset: 0.2em;
+}
+.poem .meaning-word:hover {
+  color: #ac0035;
+}
+.meaning-dialog {
+  width: min(560px, calc(100vw - 32px));
+  max-height: 85dvh;
+  overflow: auto;
+  border: 1px solid #dacbc5;
+  border-radius: 12px;
+  padding: 28px;
+  background: #fffdfb;
+  color: #211b18;
+  box-shadow: 0 20px 90px #0004;
+}
+.meaning-dialog::backdrop {
+  background: #0007;
+}
+.meaning-dialog h2 {
+  font-size: 30px;
+  margin: 12px 0;
+}
+.meaning-dialog dl > div {
+  padding: 12px 0;
+  border-top: 1px solid #e4d9d2;
+}
+.meaning-dialog dt {
+  font-size: 13px;
+  color: #63524b;
+}
+.meaning-dialog dd {
+  margin: 8px 0 0;
+  white-space: pre-wrap;
+  font-size: 19px;
+  line-height: 1.9;
+}
+.meaning-dialog [lang="ur"] {
+  font-family: "Mehr Nastaliq", serif;
+  line-height: 2.4;
+}
+.meaning-dialog [lang="hi"] {
+  font-family:
+    "Noto Sans Devanagari", "Kohinoor Devanagari", Mangal, sans-serif;
+}
+.meaning-dialog [lang="ar"] {
+  font-family: "Noto Naskh Arabic", "Geeza Pro", "Traditional Arabic", serif;
+}
+.meaning-close {
+  display: block;
+  margin-inline-start: auto;
+  background: transparent;
+  border: 0;
+  padding: 4px;
+  color: #a00033;
+}
+.meaning-reviewed {
+  color: #3e6252;
+  font-size: 13px;
+}
+.meaning-source {
+  border-top: 1px solid #e4d9d2;
+  padding-top: 12px;
+  color: #63524b;
+  font-size: 13px;
+  white-space: pre-wrap;
+}
+.meaning-studio {
+  display: grid;
+  gap: 32px;
+}
+.meaning-selection {
+  max-height: 360px;
+  overflow: auto;
+  border: 1px solid #d9cdc7;
+  border-radius: 6px;
+  padding: 16px;
+}
+.meaning-selection p {
+  white-space: pre-wrap;
+  line-height: 2.4;
+}
+.meaning-selection button {
+  font: inherit;
+  background: transparent;
+  color: #29201b;
+  border: 0;
+  padding: 2px;
+  text-decoration: underline dotted;
+  text-underline-offset: 4px;
+}
+.meaning-selection button[aria-pressed="true"] {
+  background: #ffe0eb;
+  color: #9c002f;
+}
+.meaning-context {
+  white-space: pre-wrap;
+  background: #faf3ee;
+  padding: 12px;
+  border-radius: 6px;
+}
+.meaning-entry-list ul {
+  list-style: none;
+  padding: 0;
+  display: grid;
+  gap: 10px;
+}
+.meaning-entry-list li {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 14px;
+  padding: 12px;
+  border-bottom: 1px solid #e4d9d2;
+}
+.meaning-entry-list li a {
+  font-size: 20px;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+.meaning-entry-list li span {
+  color: #62534d;
+  font-size: 13px;
+}
+.editor label.meaning-review-check {
+  display: flex;
+  align-items: start;
+  gap: 10px;
+}
+.editor .meaning-review-check input {
+  width: auto;
+  min-height: 24px;
+  flex: 0 0 auto;
+}
