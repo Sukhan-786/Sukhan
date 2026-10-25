@@ -1,6 +1,7 @@
 import type { NextConfig } from "next";
 const config: NextConfig = {
   poweredByHeader: false,
+  distDir: process.env.SUKHAN_TEST_BUILD === "1" ? ".next/test-build" : ".next",
   async headers() {
     return [
       {

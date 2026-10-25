@@ -18,11 +18,12 @@ export default defineConfig({
       reuseExistingServer: false,
     },
     {
-      command: "npm run dev -- --port 3104",
+      command: "npm run build && npm run start -- --port 3104",
       url: "http://127.0.0.1:3104/login",
       reuseExistingServer: false,
-      timeout: 60000,
+      timeout: 120000,
       env: {
+        SUKHAN_TEST_BUILD: "1",
         NEXT_PUBLIC_SUPABASE_URL: "http://127.0.0.1:3199",
         NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: "fixture-publishable-key",
         NEXT_PUBLIC_SITE_URL: "http://127.0.0.1:3104",
