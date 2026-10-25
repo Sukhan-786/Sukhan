@@ -9,12 +9,14 @@ import {
 } from "react";
 import Link from "next/link";
 import { editorFieldLabel } from "@/lib/editor-validation";
+import { decodeTextImport, maxImportBytes } from "@/lib/text-import";
 import { saveRecord, type FormState } from "@/app/admin/actions";
 import {
   forms,
   languages,
   languageLabels,
   languageTags,
+  languageDirection,
   type Artist,
   type Kalam,
   type Media,
@@ -51,7 +53,7 @@ function Field({
   initial?: string;
   required?: boolean;
   type?: string;
-  dir?: "rtl";
+  dir?: "rtl" | "ltr";
 }) {
   const [current, setCurrent] = useState(initial);
   const errors = useContext(FieldErrors);
@@ -223,6 +225,49 @@ export function Editor({
     Object.fromEntries(record?.texts?.map((t) => [t.language, t.body]) || []),
   );
   const [preview, setPreview] = useState(false);
+  const [importing, setImporting] = useState(false);
+  const [importResult, setImportResult] = useState<{
+    language: Language;
+    message: string;
+    error: boolean;
+  } | null>(null);
+  async function importText(file: File, script: Language) {
+    setImporting(true);
+    setImportResult(null);
+    try {
+      if (!file.name.toLowerCase().endsWith(".txt"))
+        throw new Error("Choose a UTF-8 plain text (.txt) file.");
+      if (file.size > maxImportBytes)
+        throw new Error("Choose a text file smaller than 400 KB.");
+      const body = decodeTextImport(new Uint8Array(await file.arrayBuffer()));
+      setBodies((current) => ({ ...current, [script]: body }));
+      setDirty(true);
+      setDismissed((current) => ({
+        result: state,
+        names: [
+          ...(current.result === state ? current.names : []),
+          `${script}_body`,
+        ],
+      }));
+      setImportResult({
+        language: script,
+        message:
+          "Text imported. Review it, add a title, then save your changes.",
+        error: false,
+      });
+    } catch (error) {
+      setImportResult({
+        language: script,
+        message:
+          error instanceof Error
+            ? error.message
+            : "Unable to read this text file.",
+        error: true,
+      });
+    } finally {
+      setImporting(false);
+    }
+  }
   const locked = role === "editor" && record?.status === "published";
   return (
     <FieldErrors.Provider value={visibleFields}>
@@ -239,6 +284,8 @@ export function Editor({
           ))
             return;
           if (target.id === "media-search") return;
+          if (target instanceof HTMLInputElement && target.type === "file")
+            return;
           setDirty(true);
           if (target.name)
             setDismissed((current) => ({
@@ -250,7 +297,7 @@ export function Editor({
             }));
           if (target.name === "status")
             setPublication(target.value as "draft" | "published");
-          const match = target.name.match(/^(ur|roman|fa|en)_title$/);
+          const match = target.name.match(/^(ur|roman|fa|en|hi|ar)_title$/);
           if (match)
             setTitles((current) => ({ ...current, [match[1]]: target.value }));
         }}
@@ -290,7 +337,7 @@ export function Editor({
                     <a
                       href={`#${name}`}
                       onClick={() => {
-                        const script = name.match(/^(ur|roman|fa|en)_/);
+                        const script = name.match(/^(ur|roman|fa|en|hi|ar)_/);
                         if (script) setLanguage(script[1] as Language);
                         requestAnimationFrame(() =>
                           document.getElementById(name)?.focus(),
@@ -310,7 +357,7 @@ export function Editor({
             Published records can only be changed by an administrator.
           </p>
         )}
-        <fieldset disabled={pending || locked}>
+        <fieldset disabled={pending || locked || importing}>
           <legend>
             {kind === "kalam"
               ? "Work details"
@@ -470,7 +517,7 @@ export function Editor({
           </div>
         </fieldset>
         {kind === "kalam" && (
-          <fieldset disabled={pending || locked}>
+          <fieldset disabled={pending || locked || importing}>
             <legend>Multilingual text</legend>
             <p className="hint">
               Add a title and text for each available script. Leave both blank
@@ -489,6 +536,7 @@ export function Editor({
                   aria-pressed={language === l}
                   onClick={() => setLanguage(l)}
                   lang={languageTags[l]}
+                  dir={languageDirection(l)}
                 >
                   {languageLabels[l]}{" "}
                   <span
@@ -511,11 +559,41 @@ export function Editor({
                 className="stack mt-5"
                 lang={languageTags[l]}
               >
+                <div className="field text-import">
+                  <label htmlFor={`${l}_import`}>
+                    Import {languageLabels[l]} text file (.txt)
+                  </label>
+                  <input
+                    id={`${l}_import`}
+                    type="file"
+                    accept=".txt,text/plain"
+                    disabled={importing}
+                    aria-describedby={`${l}_import-help`}
+                    onChange={(event) => {
+                      const file = event.currentTarget.files?.[0];
+                      event.currentTarget.value = "";
+                      if (file) void importText(file, l);
+                    }}
+                  />
+                  <small id={`${l}_import-help`} className="hint">
+                    UTF-8 .txt, up to 400 KB and 100,000 characters. Replaces
+                    this language’s text only. Nothing is saved until you click
+                    Save.
+                  </small>
+                  {importResult?.language === l && (
+                    <p
+                      role={importResult.error ? "alert" : "status"}
+                      className={importResult.error ? "field-error" : "hint"}
+                    >
+                      {importResult.message}
+                    </p>
+                  )}
+                </div>
                 <Field
                   name={`${l}_title`}
                   label={`${languageLabels[l]} title`}
                   initial={record?.texts?.find((t) => t.language === l)?.title}
-                  dir={l === "ur" || l === "fa" ? "rtl" : undefined}
+                  dir={languageDirection(l)}
                 />
                 <div className="field">
                   <label htmlFor={`${l}_body`}>{languageLabels[l]} text</label>
@@ -523,7 +601,7 @@ export function Editor({
                     className="poem-editor"
                     id={`${l}_body`}
                     name={`${l}_body`}
-                    dir={l === "ur" || l === "fa" ? "rtl" : "ltr"}
+                    dir={languageDirection(l)}
                     value={bodies[l] || ""}
                     aria-invalid={!!visibleFields[`${l}_body`]}
                     aria-describedby={
@@ -559,7 +637,7 @@ export function Editor({
               <div
                 className="editor-preview mt-5"
                 lang={languageTags[language]}
-                dir={language === "ur" || language === "fa" ? "rtl" : "ltr"}
+                dir={languageDirection(language)}
               >
                 <h2>{titles[language] || "Untitled"}</h2>
                 {bodies[language] || "No text in this script yet."}
@@ -568,7 +646,7 @@ export function Editor({
           </fieldset>
         )}
         {kind === "kalam" && (
-          <fieldset disabled={pending || locked}>
+          <fieldset disabled={pending || locked || importing}>
             <legend>Related audio & video</legend>
             <p className="hint">
               Create recordings in the media library, then attach them here.
@@ -617,7 +695,7 @@ export function Editor({
             {!media.length && <p>No recordings yet.</p>}
           </fieldset>
         )}
-        <fieldset disabled={pending || locked}>
+        <fieldset disabled={pending || locked || importing}>
           <legend>Publication & provenance</legend>
           <div className="stack">
             <LongField
@@ -652,7 +730,7 @@ export function Editor({
             className="button"
             name="intent"
             value="save"
-            disabled={pending || locked}
+            disabled={pending || locked || importing}
           >
             {pending
               ? "Saving…"

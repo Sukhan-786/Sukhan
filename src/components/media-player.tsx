@@ -1,5 +1,5 @@
 import type { Media } from "@/lib/types";
-import { languageTags } from "@/lib/types";
+import { languageTags, languageDirection } from "@/lib/types";
 export function MediaPlayer({ media }: { media: Media }) {
   return (
     <article className="media-card">
@@ -39,9 +39,7 @@ export function MediaPlayer({ media }: { media: Media }) {
         <p
           className="transcript"
           lang={languageTags[media.language]}
-          dir={
-            media.language === "ur" || media.language === "fa" ? "rtl" : "ltr"
-          }
+          dir={languageDirection(media.language)}
         >
           {media.transcript || "Transcript pending editorial review."}
         </p>
