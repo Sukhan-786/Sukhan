@@ -110,7 +110,10 @@ test("multilingual poetry, preserved attachments, validation and public reading"
     ["roman", "Roman Urdu", "Nayi subah", "Lafzon ki roshni", "ltr"],
     ["fa", "فارسی", "صبح نو", "روشنایی واژه‌ها", "rtl"],
   ]) {
-    await page.getByRole("button", { name: new RegExp(label) }).click();
+    await page
+      .getByRole("group", { name: "Editor language" })
+      .getByRole("button", { name: new RegExp(label) })
+      .click();
     await page.getByLabel(`${label} title`, { exact: true }).fill(title);
     if (language === "hi") {
       await page.locator("#hi_import").setInputFiles({
@@ -226,4 +229,189 @@ test("ordinary authenticated readers cannot enter the admin dashboard", async ({
   await expect(
     page.getByRole("navigation", { name: "Editorial navigation" }),
   ).toHaveCount(0);
+});
+
+async function saveMeaningForm(page: Page, label: string) {
+  const version = await page.locator('input[name="version"]').inputValue();
+  await page.getByRole("button", { name: label, exact: true }).click();
+  await expect(page.locator('input[name="version"]')).not.toHaveValue(version);
+  await expect(page.locator("form.editor")).toHaveAttribute(
+    "aria-busy",
+    "false",
+  );
+}
+test("reviewed word meanings publish by occurrence, support Hindi/Arabic and require re-review after text edits", async ({
+  page,
+}, info) => {
+  test.setTimeout(120_000);
+  await login(page);
+  const slug = `meaning-work-${Date.now()}`;
+  await page.goto("/admin/kalam/new");
+  await page.getByLabel("URL slug", { exact: true }).fill(slug);
+  await page
+    .getByLabel("Poet / author")
+    .selectOption({ label: "Studio Poet (published)" });
+  for (const [label, title, body] of [
+    ["اردو", "دل", "دل کی روشنی"],
+    ["English", "An original heart", "A heart, and a heart."],
+    ["हिन्दी", "दिल", "दिल की रोशनी"],
+    ["العربية", "القلب", "نور القلب"],
+  ]) {
+    await page
+      .getByRole("group", { name: "Editor language" })
+      .getByRole("button", { name: new RegExp(label) })
+      .click();
+    await page.getByLabel(`${label} title`, { exact: true }).fill(title);
+    await page.getByLabel(`${label} text`, { exact: true }).fill(body);
+  }
+  await page.getByLabel("Source, attribution").fill("Original fixture poem.");
+  await page.getByLabel("Publication status").selectOption("published");
+  await page.getByRole("button", { name: "Publish changes" }).click();
+  await expect(page.getByRole("status")).toContainText(
+    "Your changes were saved.",
+  );
+  await page.getByLabel("Search", { exact: true }).fill(slug);
+  await page.getByRole("button", { name: "Apply filters" }).click();
+  const editPath = await page
+    .getByRole("link", { name: "An original heart", exact: true })
+    .getAttribute("href");
+  expect(editPath).toMatch(/^\/admin\/kalam\/[a-f0-9-]+$/);
+  await page.goto(editPath!);
+  await page
+    .getByRole("link", { name: "Manage reviewed word meanings" })
+    .click();
+  await expect(page).toHaveURL(/\/meanings$/);
+  const meaningsPath = new URL(page.url()).pathname;
+  await page.getByLabel("Poem script").selectOption("en");
+  await page
+    .getByRole("button", { name: "Select heart at character 3", exact: true })
+    .click();
+  await page.getByLabel("English meaning", { exact: true }).fill("affection");
+  await page.getByLabel("اردو meaning", { exact: true }).fill("محبت");
+  await page.getByLabel("हिन्दी meaning", { exact: true }).fill("प्रेम");
+  await page.getByLabel("العربية meaning", { exact: true }).fill("محبة");
+  await page
+    .getByLabel("Source or editorial attribution")
+    .fill("Original editorial definition for this test.");
+  await saveMeaningForm(page, "Save meaning draft");
+  await expect(
+    page.getByRole("status").filter({ hasText: "Meaning saved." }),
+  ).toBeVisible();
+  const entryUrl = page.url();
+  await page.goto(`/kalam/${slug}`);
+  await page.getByRole("button", { name: "English", exact: true }).click();
+  await expect(page.locator(".meaning-word")).toHaveCount(0);
+  await page.goto(entryUrl);
+  await page.getByLabel("Meaning status").selectOption("published");
+  await page.getByRole("button", { name: "Publish reviewed meaning" }).click();
+  await expect(page.locator("main").getByRole("alert")).toContainText(
+    "Confirm your review",
+  );
+  await page.getByLabel("I reviewed this word").check();
+  await saveMeaningForm(page, "Publish reviewed meaning");
+  await expect(
+    page.getByRole("status").filter({ hasText: "Meaning saved." }),
+  ).toBeVisible();
+  await page.goto(`/kalam/${slug}`);
+  await page.getByRole("button", { name: "English", exact: true }).click();
+  await expect(page.locator(".poem p")).toHaveText("A heart, and a heart.");
+  await expect(page.locator(".meaning-word")).toHaveCount(1);
+  const word = page.getByRole("button", {
+    name: "Meaning of heart",
+    exact: true,
+  });
+  await word.click();
+  const dialog = page.getByRole("dialog");
+  await expect(dialog).toBeVisible();
+  for (const meaning of ["affection", "محبت", "प्रेम", "محبة"])
+    await expect(dialog.getByText(meaning, { exact: true })).toBeVisible();
+  expect(
+    (await new AxeBuilder({ page }).include(".reading-shell").analyze())
+      .violations,
+  ).toEqual([]);
+  await page.screenshot({
+    path: `test-results/word-meaning-dialog-${info.project.name}.png`,
+    fullPage: true,
+  });
+  await page.keyboard.press("Escape");
+  await expect(dialog).toBeHidden();
+  await expect(word).toBeFocused();
+  for (const [script, token, label, dir] of [
+    ["hi", "दिल", "हिन्दी", "ltr"],
+    ["ar", "القلب", "العربية", "rtl"],
+  ]) {
+    await page.goto(meaningsPath);
+    await page.getByLabel("Poem script").selectOption(script);
+    await page
+      .getByRole("button", { name: new RegExp(`Select ${token} at character`) })
+      .click();
+    await page.getByLabel("English meaning", { exact: true }).fill("heart");
+    await page
+      .getByLabel("Source or editorial attribution")
+      .fill("Original reviewed test definition.");
+    await page.getByLabel("Meaning status").selectOption("published");
+    await page.getByLabel("I reviewed this word").check();
+    await page
+      .getByRole("button", { name: "Publish reviewed meaning" })
+      .click();
+    await expect(
+      page.getByRole("status").filter({ hasText: "Meaning saved." }),
+    ).toBeVisible();
+    await page.goto(`/kalam/${slug}`);
+    await page.getByRole("button", { name: label, exact: true }).click();
+    await page
+      .getByRole("button", { name: `Meaning of ${token}`, exact: true })
+      .click();
+    await expect(
+      page
+        .getByRole("dialog")
+        .getByRole("heading", { name: token, exact: true }),
+    ).toHaveAttribute("dir", dir);
+    await page
+      .getByRole("button", { name: "Close meaning", exact: true })
+      .click();
+  }
+  await page.goto(editPath!);
+  await page.getByRole("button", { name: /English/ }).click();
+  await page
+    .getByLabel("English text", { exact: true })
+    .fill("A heart, and a heart.\nA revised line.");
+  await page.getByRole("button", { name: "Publish changes" }).click();
+  await expect(page.getByRole("status")).toContainText(
+    "Your changes were saved.",
+  );
+  await page.goto(`/kalam/${slug}`);
+  await page.getByRole("button", { name: "English", exact: true }).click();
+  await expect(page.locator(".meaning-word")).toHaveCount(0);
+  await page.getByRole("button", { name: "हिन्दी", exact: true }).click();
+  await expect(page.locator(".meaning-word")).toHaveCount(1);
+  await page.goto(entryUrl);
+  await expect(
+    page.getByText("The poem text changed.", { exact: false }),
+  ).toBeVisible();
+  await page
+    .getByRole("button", { name: "Select heart at character 3", exact: true })
+    .click();
+  await page.getByLabel("I reviewed this word").check();
+  expect(
+    (await new AxeBuilder({ page }).include(".admin-layout").analyze())
+      .violations,
+  ).toEqual([]);
+  await page.screenshot({
+    path: `test-results/word-meaning-admin-${info.project.name}.png`,
+    fullPage: true,
+  });
+  await saveMeaningForm(page, "Publish reviewed meaning");
+  await expect(
+    page.getByRole("status").filter({ hasText: "Meaning saved." }),
+  ).toBeVisible();
+  await page.goto(entryUrl);
+  await page.getByLabel("Meaning status").selectOption("archived");
+  await saveMeaningForm(page, "Archive meaning");
+  await expect(
+    page.getByRole("status").filter({ hasText: "Meaning saved." }),
+  ).toBeVisible();
+  await page.goto(`/kalam/${slug}`);
+  await page.getByRole("button", { name: "English", exact: true }).click();
+  await expect(page.locator(".meaning-word")).toHaveCount(0);
 });
