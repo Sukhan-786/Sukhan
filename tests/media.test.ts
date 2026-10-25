@@ -40,3 +40,19 @@ test("video renders a language-labelled captions track and preserves transcript 
   assert.match(html, /srcLang="ur"/i);
   assert.match(html, /dir="rtl"/);
 });
+
+test("Arabic captions and transcripts use Arabic metadata and RTL", () => {
+  const html = renderToStaticMarkup(
+    createElement(MediaPlayer, {
+      media: {
+        ...media,
+        kind: "video",
+        language: "ar",
+        caption_url: "https://example.com/ar.vtt",
+        transcript: "نور الكلمات",
+      },
+    }),
+  );
+  assert.match(html, /srcLang="ar"/i);
+  assert.match(html, /lang="ar" dir="rtl"/);
+});

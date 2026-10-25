@@ -455,3 +455,48 @@ test("search treats SQL and HTML input as literal text", async () => {
     0,
   );
 });
+
+test("six-script saves preserve legacy translations, enforce RLS and search Hindi/Arabic", async () => {
+  await as("authenticated", admin);
+  const input = payload("six-script-work", "published");
+  input.texts.push(
+    { language: "hi", title: "शब्दों का दीपक", body: "शब्दों की रोशनी" },
+    { language: "ar", title: "مصباح الكلمات", body: "نور الكلمات" },
+  );
+  const id = await save(input);
+  const stored = await db.query<{ language: string; body: string }>(
+    "select language,body from public.kalam_texts where kalam_id=$1",
+    [id],
+  );
+  assert.equal(stored.rows.length, 6);
+  assert.equal(
+    stored.rows.find((t) => t.language === "hi")?.body,
+    "शब्दों की रोशनी",
+  );
+  await as("anon");
+  for (const query of ["रोशनी", "نور"]) {
+    const matches = await db.query<{ id: string }>(
+      "select id from public.search_kalam($1)",
+      [query],
+    );
+    assert.equal(matches.rows[0]?.id, id);
+  }
+  await as("authenticated", reader);
+  await assert.rejects(
+    save({ ...input, slug: "reader-six-script" }),
+    /row.level security/i,
+  );
+  await as("authenticated", admin);
+  const recording = await db.query<{ language: string }>(
+    "insert into public.media(title,kind,url,language,transcript) values('Arabic voice','audio','https://example.com/ar.mp3','ar','نور الكلمات'),('Hindi voice','audio','https://example.com/hi.mp3','hi','शब्दों की रोशनी') returning language",
+  );
+  assert.deepEqual(recording.rows.map((t) => t.language).sort(), ["ar", "hi"]);
+  await assert.rejects(
+    save({
+      ...input,
+      slug: "too-many-scripts",
+      texts: [...input.texts, input.texts[0]],
+    }),
+    /One to six/,
+  );
+});
