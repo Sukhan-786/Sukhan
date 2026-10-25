@@ -6,6 +6,8 @@ Create or choose a dedicated Sukhan Supabase project. Confirm it is not the scho
 
 ## 2. Apply the migration
 
+The foundation filename uses the installed hosted version `20261024204452`. Its schema was checked against the repository using 38 catalog fingerprints covering columns, constraints, policies, grants, functions, indexes and triggers. Keep this version aligned with the existing migration history; changing it back would make production sync try to recreate existing tables.
+
 Review both migrations in `supabase/migrations/` in filename order. The foundation migration creates the tables; the editorial migration adds staff-only search, overview counts and cursor navigation. If the foundation is already installed, apply only the new migration through the existing migration process. For a new empty hosted project, run it once in the Supabase SQL Editor as the database owner. It uses a transaction and explicitly grants the intended API privileges alongside RLS. Do not apply it blindly to an existing populated schema.
 
 Alternatively, authenticate the pinned Supabase CLI, consult `npx supabase link --help` and `npx supabase db push --help`, link the dedicated project, inspect migration history and push through your normal migration process. If GitHub production synchronization is enabled in Supabase, confirm its migration run succeeds after merging changes. Do not run an already tracked migration manually.
