@@ -1,17 +1,26 @@
-export const languages = ["ur", "roman", "fa", "en"] as const;
+export const languages = ["ur", "en", "hi", "ar", "roman", "fa"] as const;
 export type Language = (typeof languages)[number];
 export const languageLabels: Record<Language, string> = {
   ur: "اردو",
   roman: "Roman Urdu",
   fa: "فارسی",
   en: "English",
+  hi: "हिन्दी",
+  ar: "العربية",
 };
 export const languageTags: Record<Language, string> = {
   ur: "ur",
   roman: "ur-Latn",
   fa: "fa",
   en: "en",
+  hi: "hi",
+  ar: "ar",
 };
+export function languageDirection(language: Language): "rtl" | "ltr" {
+  return language === "ur" || language === "fa" || language === "ar"
+    ? "rtl"
+    : "ltr";
+}
 export const forms = ["ghazal", "nazm", "sher", "rubai", "prose"] as const;
 export type Status = "draft" | "published";
 export type StaffRole = "admin" | "editor";

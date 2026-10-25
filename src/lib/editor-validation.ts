@@ -34,8 +34,10 @@ export function editorFieldLabel(name: string) {
     roman: "Roman Urdu",
     fa: "Persian",
     en: "English",
+    hi: "Hindi",
+    ar: "Arabic",
   };
-  const match = name.match(/^(ur|roman|fa|en)_(title|body)$/);
+  const match = name.match(/^(ur|roman|fa|en|hi|ar)_(title|body)$/);
   if (match)
     return `${scripts[match[1]]} ${match[2] === "body" ? "text" : "title"}`;
   const labels: Record<string, string> = {
