@@ -151,7 +151,18 @@ test("every exposed table has RLS enabled", async () => {
   const r = await db.query<{ relname: string; relrowsecurity: boolean }>(
     "select relname,relrowsecurity from pg_class join pg_namespace n on n.oid=relnamespace where n.nspname='public' and relkind='r'",
   );
-  assert.equal(r.rows.length, 6);
+  assert.deepEqual(
+    r.rows.map((t) => t.relname).sort(),
+    [
+      "staff_roles",
+      "artists",
+      "kalam",
+      "kalam_texts",
+      "media",
+      "kalam_media",
+      "word_meanings",
+    ].sort(),
+  );
   assert.ok(r.rows.every((t) => t.relrowsecurity));
 });
 test("anonymous readers see only published works and their translations", async () => {
@@ -498,5 +509,206 @@ test("six-script saves preserve legacy translations, enforce RLS and search Hind
       texts: [...input.texts, input.texts[0]],
     }),
     /One to six/,
+  );
+});
+
+test("contextual meanings require administrator review, preserve RLS and disappear after poem edits", async () => {
+  const { createHash } = await import("node:crypto");
+  const hash = (body: string) =>
+    createHash("sha256").update(body, "utf8").digest("hex");
+  await as("authenticated", admin);
+  const input = payload("word-meaning-work", "published");
+  input.texts[0].body = "🌙 جہاں دل جہاں";
+  const id = await save(input);
+  const meaning = {
+    kalam_id: id,
+    language: "ur",
+    start_offset: 2,
+    end_offset: 6,
+    surface: "جہاں",
+    text_hash: hash(input.texts[0].body),
+    meaning_ur: "دنیا",
+    meaning_en: "world",
+    meaning_hi: "दुनिया",
+    meaning_ar: "عالم",
+    context_note: "A world in this context",
+    source_note: "Original editorial definition",
+    status: "draft",
+    review_confirmed: false,
+  };
+  async function saveMeaning(
+    value: typeof meaning,
+    record: string | null = null,
+    version: string | null = null,
+  ) {
+    return (
+      await db.query<{ id: string }>(
+        "select public.save_word_meaning($1,$2::jsonb,$3::timestamptz) id",
+        [record, JSON.stringify(value), version],
+      )
+    ).rows[0].id;
+  }
+  async function version(record: string) {
+    return (
+      await db.query<{ v: string }>(
+        "select updated_at::text v from public.word_meanings where id=$1",
+        [record],
+      )
+    ).rows[0].v;
+  }
+  const entry = await saveMeaning(meaning);
+  await as("anon");
+  assert.equal(
+    (
+      await db.query("select id from public.word_meanings where kalam_id=$1", [
+        id,
+      ])
+    ).rows.length,
+    0,
+  );
+  await assert.rejects(saveMeaning(meaning), /permission denied/i);
+  await as("authenticated", reader);
+  await assert.rejects(saveMeaning(meaning), /Staff access required/);
+  await as("authenticated", editor);
+  await assert.rejects(
+    saveMeaning({ ...meaning, status: "published", review_confirmed: true }),
+    /row.level security|Administrator review/i,
+  );
+  await saveMeaning(
+    { ...meaning, meaning_en: "realm" },
+    entry,
+    await version(entry),
+  );
+  await as("authenticated", admin);
+  await assert.rejects(
+    saveMeaning(
+      { ...meaning, status: "published" },
+      entry,
+      await version(entry),
+    ),
+    /Confirm.*review/,
+  );
+  const oldVersion = await version(entry);
+  await saveMeaning(
+    { ...meaning, status: "published", review_confirmed: true },
+    entry,
+    oldVersion,
+  );
+  await assert.rejects(
+    saveMeaning(
+      { ...meaning, status: "published", review_confirmed: true },
+      entry,
+      oldVersion,
+    ),
+    /meaning changed/i,
+  );
+  await assert.rejects(
+    saveMeaning({ ...meaning, status: "published", review_confirmed: true }),
+    /already has a published meaning/,
+  );
+  await assert.rejects(
+    saveMeaning({ ...meaning, start_offset: 0, end_offset: 4 }),
+    /selected word does not match/i,
+  );
+  await as("authenticated", editor);
+  await assert.rejects(
+    saveMeaning(meaning, entry, await version(entry)),
+    /unavailable|row.level security/i,
+  );
+  await as("anon");
+  assert.equal(
+    (
+      await db.query(
+        "select id,meaning_en from public.word_meanings where id=$1",
+        [entry],
+      )
+    ).rows.length,
+    1,
+  );
+  await assert.rejects(
+    db.query("select reviewed_by from public.word_meanings"),
+    /permission denied/i,
+  );
+  await as("authenticated", admin);
+  const kalamVersion = (
+    await db.query<{ v: string }>(
+      "select updated_at::text v from public.kalam where id=$1",
+      [id],
+    )
+  ).rows[0].v;
+  input.texts[0].body += "\nنئی سطر";
+  await save(input, id, kalamVersion);
+  await as("anon");
+  assert.equal(
+    (await db.query("select id from public.word_meanings where id=$1", [entry]))
+      .rows.length,
+    0,
+  );
+  await as("authenticated", admin);
+  await assert.rejects(
+    saveMeaning(
+      { ...meaning, status: "published", review_confirmed: true },
+      entry,
+      await version(entry),
+    ),
+    /Poem text changed/i,
+  );
+  await saveMeaning(
+    {
+      ...meaning,
+      text_hash: hash(input.texts[0].body),
+      status: "published",
+      review_confirmed: true,
+    },
+    entry,
+    await version(entry),
+  );
+  await as("anon");
+  assert.equal(
+    (await db.query("select id from public.word_meanings where id=$1", [entry]))
+      .rows.length,
+    1,
+  );
+  await as("authenticated", admin);
+  await saveMeaning(
+    { ...meaning, status: "archived" },
+    entry,
+    await version(entry),
+  );
+  await as("anon");
+  assert.equal(
+    (await db.query("select id from public.word_meanings where id=$1", [entry]))
+      .rows.length,
+    0,
+  );
+});
+
+test("meanings on private works stay private and the per-work limit is enforced", async () => {
+  const { createHash } = await import("node:crypto");
+  await as("authenticated", admin);
+  const input = payload("private-meanings");
+  input.texts[0].body = "دل";
+  const id = await save(input);
+  const hash = createHash("sha256").update("دل").digest("hex");
+  const insert =
+    "insert into public.word_meanings(kalam_id,language,start_offset,end_offset,surface,text_hash,meaning_en,source_note,status) values($1,'ur',0,2,'دل',$2,'heart','Original editorial definition','published') returning id";
+  const entry = (await db.query<{ id: string }>(insert, [id, hash])).rows[0].id;
+  await as("anon");
+  assert.equal(
+    (await db.query("select id from public.word_meanings where id=$1", [entry]))
+      .rows.length,
+    0,
+  );
+  await as("authenticated", admin);
+  await db.query(
+    "insert into public.word_meanings(kalam_id,language,start_offset,end_offset,surface,text_hash,meaning_en) select $1,'ur',0,2,'دل',$2,'heart' from generate_series(1,499)",
+    [id, hash],
+  );
+  await assert.rejects(
+    db.query(
+      "insert into public.word_meanings(kalam_id,language,start_offset,end_offset,surface,text_hash,meaning_en) values($1,'ur',0,2,'دل',$2,'heart')",
+      [id, hash],
+    ),
+    /500 meanings/,
   );
 });
