@@ -10,7 +10,8 @@ import {
   mayWrite,
 } from "@/lib/validation";
 import { languages } from "@/lib/types";
-export type FormState = { error: string };
+import { editorErrors } from "@/lib/editor-validation";
+export type FormState = { error: string; fields?: Record<string, string> };
 function value(form: FormData, key: string) {
   return String(form.get(key) || "");
 }
@@ -76,12 +77,7 @@ export async function saveRecord(
         texts,
         media_ids: form.getAll("media_ids"),
       });
-      if (!parsed.success)
-        return {
-          error: parsed.error.issues
-            .map((i) => `${i.path.join(".")}: ${i.message}`)
-            .join("\n"),
-        };
+      if (!parsed.success) return editorErrors(parsed.error.issues, texts);
       const { error } = await db.rpc("save_kalam", {
         record_id: id,
         payload: parsed.data,
@@ -108,12 +104,7 @@ export async function saveRecord(
         kind === "artists"
           ? artistSchema.safeParse(raw)
           : mediaSchema.safeParse(raw);
-      if (!parsed.success)
-        return {
-          error: parsed.error.issues
-            .map((i) => `${i.path.join(".")}: ${i.message}`)
-            .join("\n"),
-        };
+      if (!parsed.success) return editorErrors(parsed.error.issues);
       const values: Record<string, unknown> = parsed.data;
       const result = id
         ? await db
@@ -132,5 +123,7 @@ export async function saveRecord(
     }
   }
   revalidatePath("/", "layout");
-  redirect(`/admin/${kind}`);
+  redirect(
+    `/admin/${kind}?notice=${intent === "delete" ? "deleted" : "saved"}`,
+  );
 }
