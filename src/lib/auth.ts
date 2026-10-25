@@ -1,8 +1,9 @@
 import "server-only";
+import { cache } from "react";
 import { redirect } from "next/navigation";
 import { createClient } from "./supabase/server";
 import type { StaffRole } from "./types";
-export async function requireStaff() {
+export const requireStaff = cache(async function requireStaff() {
   const db = await createClient();
   if (!db) redirect("/login?reason=setup");
   const {
@@ -19,4 +20,4 @@ export async function requireStaff() {
   if (!data || !["admin", "editor"].includes(data.role))
     redirect("/login?reason=access");
   return { db, user, role: data.role as StaffRole };
-}
+});

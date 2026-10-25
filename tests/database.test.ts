@@ -69,6 +69,83 @@ before(async () => {
 after(async () => {
   await db.close();
 });
+test("editorial listings and counts deny anonymous and ordinary reader access", async () => {
+  await as("anon");
+  await assert.rejects(
+    db.query("select public.editorial_page('kalam')"),
+    /permission denied/i,
+  );
+  await as("authenticated", reader);
+  await assert.rejects(
+    db.query("select public.editorial_page('kalam')"),
+    /staff access required/i,
+  );
+  await assert.rejects(
+    db.query("select public.editorial_overview()"),
+    /staff access required/i,
+  );
+});
+test("staff search finds draft translations and treats search text literally", async () => {
+  await as("authenticated", editor);
+  const page = await db.query<{
+    page: { total: number; items: { status: string; scripts: string[] }[] };
+  }>("select public.editorial_page('kalam','چراغ','draft') page");
+  assert.equal(page.rows[0].page.total, 1);
+  assert.equal(page.rows[0].page.items[0].status, "draft");
+  assert.equal(page.rows[0].page.items[0].scripts.length, 4);
+  const injection = await db.query<{ page: { total: number } }>(
+    "select public.editorial_page('kalam',$1) page",
+    ["'; drop table kalam; --"],
+  );
+  assert.equal(injection.rows[0].page.total, 0);
+  const overview = await db.query<{
+    counts: { kalam: { total: number; draft: number; published: number } };
+  }>("select public.editorial_overview() counts");
+  assert.deepEqual(overview.rows[0].counts.kalam, {
+    total: 2,
+    draft: 1,
+    published: 1,
+  });
+});
+test("editorial cursor navigation reaches every record and returns to newer results without duplicates", async () => {
+  await as("owner");
+  await db.exec(
+    "insert into public.artists(slug,name,kind) select 'paging-'||n,'Paging '||n,'artist' from generate_series(1,60) n",
+  );
+  await as("authenticated", admin);
+  type Page = {
+    items: { id: string; updated_at: string }[];
+    total: number;
+    has_more: boolean;
+  };
+  const fetch = async (
+    cursor: Page["items"][number] | null = null,
+    previous = false,
+  ) => {
+    const result = await db.query<{ page: Page }>(
+      "select public.editorial_page('artists','Paging','','artist',$1,$2,$3) page",
+      [cursor?.updated_at || null, cursor?.id || null, previous],
+    );
+    return result.rows[0].page;
+  };
+  const first = await fetch(),
+    second = await fetch(first.items.at(-1)),
+    third = await fetch(second.items.at(-1));
+  assert.equal(first.total, 60);
+  assert.equal(first.items.length, 25);
+  assert.equal(third.items.length, 10);
+  assert.equal(third.has_more, false);
+  assert.equal(
+    new Set([...first.items, ...second.items, ...third.items].map((r) => r.id))
+      .size,
+    60,
+  );
+  const back = await fetch(second.items[0], true);
+  assert.deepEqual(back.items, first.items);
+  assert.equal(back.has_more, false);
+  await as("owner");
+  await db.exec("delete from public.artists where slug like 'paging-%'");
+});
 test("every exposed table has RLS enabled", async () => {
   await as("owner");
   const r = await db.query<{ relname: string; relrowsecurity: boolean }>(

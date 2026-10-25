@@ -2,13 +2,13 @@
 
 ## 1. Use a separate project
 
-Create or choose a dedicated Sukhan Supabase project. Confirm it is not the school project. This handoff did not provision a hosted project, incur a project cost, or modify any remote database. The Supabase connector was unavailable, Docker/PostgreSQL services were not installed, and no database credentials were provided.
+Create or choose a dedicated Sukhan Supabase project. Confirm it is not the school project. The project must be separate from the school website. Existing GitHub, Supabase and Vercel connections do not by themselves prove that every migration or account is ready. Inspect the hosted migration history before applying changes.
 
 ## 2. Apply the migration
 
-Review `supabase/migrations/20261024130534_sukhan_foundation.sql`. For a new empty hosted project, run it once in the Supabase SQL Editor as the database owner. It uses a transaction and explicitly grants the intended API privileges alongside RLS. Do not apply it blindly to an existing populated schema.
+Review both migrations in `supabase/migrations/` in filename order. The foundation migration creates the tables; the editorial migration adds staff-only search, overview counts and cursor navigation. If the foundation is already installed, apply only the new migration through the existing migration process. For a new empty hosted project, run it once in the Supabase SQL Editor as the database owner. It uses a transaction and explicitly grants the intended API privileges alongside RLS. Do not apply it blindly to an existing populated schema.
 
-Alternatively, authenticate the pinned Supabase CLI, consult `npx supabase link --help` and `npx supabase db push --help`, link the dedicated project, inspect migration history and push through your normal migration process. This session generated the migration with the CLI but did not apply it to a hosted database.
+Alternatively, authenticate the pinned Supabase CLI, consult `npx supabase link --help` and `npx supabase db push --help`, link the dedicated project, inspect migration history and push through your normal migration process. If GitHub production synchronization is enabled in Supabase, confirm its migration run succeeds after merging changes. Do not run an already tracked migration manually.
 
 For full local Supabase, install Docker first, then consult `npx supabase start --help`. The included `supabase/config.toml` disables public signup. PostgreSQL policy tests run without Docker using PGlite, via `npm test`.
 
@@ -57,10 +57,10 @@ The native player expects browser-compatible files, not a YouTube page URL. The 
 
 Before publishing, test admin and editor accounts against the hosted project: create/edit/delete drafts, publish as admin, deny publication as editor, ensure no draft is visible anonymously, exercise all language fields, test stale saves, attach and remove media, and try direct API writes as a reader. Run Supabase Security Advisors and review the exposed schema. The app's `private` schema must remain outside Data API exposed schemas.
 
-Run `npm run check` and browser tests. The checked-in browser suite is deliberately for the unconfigured sample preview and asserts a locked CMS. Run it with the two Supabase variables absent; it does not claim to test live sign-in. Add dedicated test-account integration tests after the project is connected, using isolated test data and secrets supplied through CI settings.
+Run `npm run check`, `npm run test:e2e` and `npm run test:admin`. Build the public preview tests with the Supabase variables empty. The admin suite uses an isolated loopback Auth/REST contract fixture backed by the real migrations in PGlite; it covers the browser publishing journey without contacting a hosted project. It does not replace hosted Auth/PostgREST verification with your real staff account. No production authentication bypass or sample administrator is built into the app.
 
 ## 7. Repository and hosting
 
-A separate local Git repository is initialized on `main`. It has no remote, no commit made with an invented identity, and no deployment configuration pointing to the school site. Choose the intended GitHub account and new Sukhan repository when private repository access is restored.
+The dedicated repository is https://github.com/Sukhan-786/Sukhan. Keep its deployment and database integration separate from the school site. Do not commit `.env.local` or credentials. See `ADMIN_STUDIO.md` for the updated admin workflow and test scope.
 
 For hosting, configure this folder as a new Next.js project with Node.js 24, install using `npm ci`, build using `npm run build`, and set the three environment variables. Set the real site URL before the production build so metadata and sitemap links use the right domain. Rebuild after connecting the database. Verify the resulting deployment URL, hosted CRUD, anonymous draft denial, media playback and SSL before calling it live.

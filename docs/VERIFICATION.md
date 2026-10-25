@@ -56,3 +56,7 @@ Provide a dedicated Supabase project and staff accounts, apply the migration, se
 ## Visual revision
 
 The Rekhta-style revision was measured and compared at matched desktop/mobile viewports. All 16 updated browser checks pass, including accessibility, carousel navigation, script switching, translation and text download. The 26 application tests remain passing. Build, lint and TypeScript pass. Font licenses and visual differences are documented in DESIGN_COMPARISON.md.
+
+## Admin optimization — 25 October 2026
+
+The admin update adds 5 application/database tests (31 total) and an isolated admin browser suite of 10 desktop/mobile journeys. See ADMIN_STUDIO.md for exact coverage and limitations. The original public suite still contains 16 journeys. Read-only requests to the selected hosted Sukhan project returned HTTP 200 for artists, kalam and media, with no published rows in each one-row sample. Its tables were visible in the dashboard. The app’s local configuration now points to that project using its publishable key, kept in an ignored .env.local file. This is evidence of Data API connectivity, not proof of a hosted staff sign-in or successful live CMS save.

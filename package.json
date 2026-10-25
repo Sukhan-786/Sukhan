@@ -10,6 +10,7 @@
     "lint": "eslint .",
     "test": "node --import tsx --test tests/*.test.ts",
     "test:e2e": "playwright test",
+    "test:admin": "playwright test --config playwright.admin.config.ts",
     "check": "npm run lint && npm run typecheck && npm test && npm run build",
     "format": "prettier --write ."
   },

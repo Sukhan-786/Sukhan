@@ -1,0 +1,29 @@
+# Editorial studio — admin optimization
+
+## Daily workflow
+
+Sign in at `/login` using a real Auth account with an owner-assigned staff role. The overview shows totals, draft/published counts and recently edited kalam. Create a poet profile first, then add the work and its available scripts. Preview Urdu/Persian in RTL and English/Roman Urdu in LTR. Add source notes, attach published recordings, choose a publication status and save. Drafts remain private to staff.
+
+## Changes
+
+- Active navigation, account identity, responsive sidebar, loading/error states and clear empty states.
+- Staff-only search across all stored titles, author names and slugs. Status/type filters persist across cursor links. Results load 25 records at a time, using timestamp/UUID cursors in both directions, without the former 200-record list cutoff.
+- Draft/published overview counts and a recent-work queue.
+- Multilingual completion indicators, character/line counts and title/body preview.
+- Friendly field errors with links to the correct script. Corrected fields clear their stale errors while entered values stay intact.
+- Unsaved-change warnings for link navigation and tab unload. Browser-history navigation within the app is not a guaranteed draft-recovery mechanism; save before navigating. There is no browser-storage autosave of private manuscripts.
+- Explicit draft/publish feedback and a separate deletion disclosure with the existing required confirmation checkbox. Database relationship, publication and stale-version checks remain enforced.
+- Recording search keeps selected attachments even when a checkbox is filtered out. Choice queries load only the fields needed and keep existing relationships outside the initial choice window. Author and recording pickers still show the initial 500 choices plus currently selected records; a remote search picker is a later scaling improvement.
+- Staff checks are deduplicated within a request using React cache. Roles are still read afresh on each request and in each server mutation.
+
+## Security and database
+
+Apply the new editorial migration after the foundation migration. New RPC functions are SECURITY INVOKER with fixed search paths, explicit grants and a live staff-role guard. Anonymous roles cannot execute them; ordinary signed-in readers are rejected. They do not bypass RLS or expose staff membership. No service-role key or production auth bypass is needed. Search terms are SQL parameters and treated literally. Three ordering indexes support cursor retrieval. Search counts normalize and scan the matching title/name metadata; this is suitable for the initial archive, not a claim of indexed full-text search at arbitrary scale.
+
+Admin roles must be assigned by the trusted project owner to an existing Auth UUID. A Supabase dashboard login is separate from an app Auth user. The app never promotes accounts based on email text, user metadata or public signup.
+
+## Verification
+
+`npm run check` runs lint, TypeScript, 31 application/database/component tests and the production build. `npm run test:e2e` covers 16 public desktop/mobile journeys. `npm run test:admin` covers 10 desktop/mobile journeys using an isolated loopback fixture backed by actual PostgreSQL migrations in PGlite: sign-in contract, dashboard/filter/cursor behavior, poet publication, validation preservation, multilingual publication with an attachment, public reading, unsaved navigation, editor restrictions and reader denial. Axe checks cover the archive and editor; this is not a complete manual accessibility audit.
+
+The fixture uses synthetic example.test accounts. It implements the Auth/REST calls needed by these journeys; it is not the hosted Supabase stack. Hosted login, real account setup, advisors and CMS saves must still be checked on the selected project. Real media playback and caption accuracy require approved media assets.
