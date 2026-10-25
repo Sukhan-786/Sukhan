@@ -1,8 +1,13 @@
 import { notFound } from "next/navigation";
 import { z } from "zod";
 import { requireStaff } from "./auth";
-import { Editor, type Editable } from "@/components/editor";
-import type { Artist, Media } from "./types";
+import {
+  Editor,
+  type Editable,
+  type EditorArtist,
+  type EditorMedia,
+} from "@/components/editor";
+import type { Media } from "./types";
 export async function renderEditor(
   kind: "kalam" | "artists" | "media",
   id: string,
@@ -10,8 +15,20 @@ export async function renderEditor(
   const { db, role } = await requireStaff();
   if (id !== "new" && !z.uuid().safeParse(id).success) notFound();
   const [artistsResult, mediaResult] = await Promise.all([
-    db.from("artists").select("*").order("name").limit(500),
-    db.from("media").select("*").order("title").limit(500),
+    kind === "artists"
+      ? Promise.resolve({ data: [], error: null })
+      : db
+          .from("artists")
+          .select("id,name,name_ur,kind,status")
+          .order("name")
+          .limit(500),
+    kind === "kalam"
+      ? db
+          .from("media")
+          .select("id,title,kind,status")
+          .order("title")
+          .limit(500)
+      : Promise.resolve({ data: [], error: null }),
   ]);
   if (artistsResult.error || mediaResult.error)
     throw new Error("Unable to load editorial choices.");
@@ -41,6 +58,21 @@ export async function renderEditor(
           }
         : row;
   }
+  const authorChoices = artistsResult.data as EditorArtist[];
+  const authorId = kind === "kalam" ? record?.poet_id : record?.performer_id;
+  if (authorId && !authorChoices.some((a) => a.id === authorId)) {
+    const current = await db
+      .from("artists")
+      .select("id,name,name_ur,kind,status")
+      .eq("id", authorId)
+      .maybeSingle();
+    if (current.error) throw new Error("Unable to load the credited author.");
+    if (current.data) authorChoices.push(current.data);
+  }
+  const mediaChoices = [...mediaResult.data];
+  for (const recording of record?.media || [])
+    if (!mediaChoices.some((m) => m.id === recording.id))
+      mediaChoices.push(recording);
   return (
     <>
       <div className="admin-heading">
@@ -57,8 +89,8 @@ export async function renderEditor(
         key={id}
         kind={kind}
         record={record as Editable | null}
-        artists={artistsResult.data as Artist[]}
-        media={mediaResult.data as Media[]}
+        artists={authorChoices}
+        media={mediaChoices as EditorMedia[]}
         role={role}
       />
     </>
