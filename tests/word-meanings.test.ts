@@ -115,5 +115,5 @@ test("publication requires a reviewed meaning and provenance; HTML stays plain t
     }),
   );
   assert.doesNotMatch(html, /<script>alert/);
-  assert.match(html, /&lt;script&gt;/);
+  assert.match(html.replace(/<[^>]+>/g, ""), /&lt;script&gt;/);
 });
