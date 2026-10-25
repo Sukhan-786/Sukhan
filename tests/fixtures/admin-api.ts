@@ -2,6 +2,7 @@
 import { createServer } from "node:http";
 import { readFile, readdir } from "node:fs/promises";
 import { PGlite } from "@electric-sql/pglite";
+import { meaningColumns } from "../../src/lib/word-meanings";
 async function main() {
   const db = new PGlite();
   const admin = "a0000000-0000-4000-8000-000000000001",
@@ -175,7 +176,40 @@ async function main() {
               ],
             )
           ).rows[0].v;
-        else if (endpoint === "rpc/save_kalam")
+        else if (endpoint === "rpc/search_kalam") {
+          const rows = (
+            await db.query<Record<string, unknown>>(
+              "select * from public.search_kalam($1,$2,$3,$4)",
+              [
+                body.search_query || "",
+                body.filter_form || null,
+                body.filter_poet || null,
+                body.filter_kind || null,
+              ],
+            )
+          ).rows;
+          for (const row of rows) {
+            row.texts = (
+              await db.query(
+                "select * from public.kalam_texts where kalam_id=$1",
+                [row.id],
+              )
+            ).rows;
+            row.poet =
+              (
+                await db.query("select * from public.artists where id=$1", [
+                  row.poet_id,
+                ])
+              ).rows[0] || null;
+            row.links = (
+              await db.query(
+                "select to_jsonb(m) media from public.kalam_media km join public.media m on m.id=km.media_id where km.kalam_id=$1",
+                [row.id],
+              )
+            ).rows;
+          }
+          result = rows;
+        } else if (endpoint === "rpc/save_kalam")
           result = (
             await db.query<{ v: unknown }>(
               "select public.save_kalam($1,$2::jsonb,$3::timestamptz) v",
@@ -186,8 +220,25 @@ async function main() {
               ],
             )
           ).rows[0].v;
+        else if (endpoint === "rpc/save_word_meaning")
+          result = (
+            await db.query<{ v: unknown }>(
+              "select public.save_word_meaning($1,$2::jsonb,$3::timestamptz) v",
+              [
+                body.record_id,
+                JSON.stringify(body.payload),
+                body.expected_updated_at,
+              ],
+            )
+          ).rows[0].v;
         else if (
-          ["staff_roles", "artists", "media", "kalam"].includes(endpoint)
+          [
+            "staff_roles",
+            "artists",
+            "media",
+            "kalam",
+            "word_meanings",
+          ].includes(endpoint)
         ) {
           const table = endpoint;
           const filters: string[] = [];
@@ -199,6 +250,8 @@ async function main() {
             "user_id",
             "updated_at",
             "performer_id",
+            "kalam_id",
+            "language",
           ]) {
             const v = url.searchParams.get(key);
             if (v?.startsWith("eq.")) {
@@ -256,7 +309,7 @@ async function main() {
                   : " order by updated_at desc,id desc";
             const rows = (
               await db.query<Record<string, unknown>>(
-                `select * from public.${table}${where}${order} limit 500`,
+                `select ${table === "word_meanings" ? meaningColumns : "*"} from public.${table}${where}${order} limit 500`,
                 args,
               )
             ).rows;
