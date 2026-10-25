@@ -49,7 +49,7 @@ export const kalamSchema = z
         }),
       )
       .min(1)
-      .max(4),
+      .max(languages.length),
     media_ids: z.array(z.uuid()).max(30),
   })
   .refine(

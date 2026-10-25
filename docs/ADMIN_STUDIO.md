@@ -2,7 +2,7 @@
 
 ## Daily workflow
 
-Sign in at `/login` using a real Auth account with an owner-assigned staff role. The overview shows totals, draft/published counts and recently edited kalam. Create a poet profile first, then add the work and its available scripts. Preview Urdu/Persian in RTL and English/Roman Urdu in LTR. Add source notes, attach published recordings, choose a publication status and save. Drafts remain private to staff.
+Sign in at `/login` using a real Auth account with an owner-assigned staff role. The overview shows totals, draft/published counts and recently edited kalam. Create a poet profile first, then add the work and its available scripts. Preview Urdu/Persian/Arabic in RTL and English/Roman Urdu/Hindi in LTR. Add source notes, attach published recordings, choose a publication status and save. Drafts remain private to staff.
 
 ## Changes
 
@@ -24,6 +24,12 @@ Admin roles must be assigned by the trusted project owner to an existing Auth UU
 
 ## Verification
 
-`npm run check` runs lint, TypeScript, 31 application/database/component tests and the production build. `npm run test:e2e` covers 16 public desktop/mobile journeys. `npm run test:admin` covers 10 desktop/mobile journeys using an isolated loopback fixture backed by actual PostgreSQL migrations in PGlite: sign-in contract, dashboard/filter/cursor behavior, poet publication, validation preservation, multilingual publication with an attachment, public reading, unsaved navigation, editor restrictions and reader denial. Axe checks cover the archive and editor; this is not a complete manual accessibility audit.
+`npm run check` runs lint, TypeScript, 36 application/database/component tests and the production build. `npm run test:e2e` covers 16 public desktop/mobile journeys. `npm run test:admin` covers 10 desktop/mobile journeys using an isolated loopback fixture backed by actual PostgreSQL migrations in PGlite: sign-in contract, dashboard/filter/cursor behavior, poet publication, validation preservation, multilingual publication with an attachment, public reading, unsaved navigation, editor restrictions and reader denial. Axe checks cover the archive and editor; this is not a complete manual accessibility audit.
 
 The fixture uses synthetic example.test accounts. It implements the Auth/REST calls needed by these journeys; it is not the hosted Supabase stack. Hosted login, real account setup, advisors and CMS saves must still be checked on the selected project. Real media playback and caption accuracy require approved media assets.
+
+## Multilingual text import
+
+Kalam supports Urdu, English, Hindi, Arabic, Roman Urdu and Persian in the same record. Select a language tab, enter its title, then paste the text or choose a UTF-8 `.txt` file. Import changes that language's text only; review and save the form to persist it. Maximum import is 400,000 bytes and 100,000 characters. UTF-8 decoding is strict, Windows line endings are normalized, and binary/empty/oversized files leave existing text unchanged. Files are read locally and their content is submitted as plain text on Save. PDF, Word and automatic translation are not supported by this import.
+
+Arabic, Urdu and Persian read right to left; Hindi, English and Roman Urdu read left to right. The public reader offers the same language tabs, and media records accept Hindi and Arabic for transcript/caption metadata. The additive `multilingual_hindi_arabic` migration expands the two language constraints and atomic save limit to six, preserving existing data, RLS, publication checks and grants.

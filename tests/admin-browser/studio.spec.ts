@@ -72,9 +72,9 @@ test("create a published poet with validation feedback and save confirmation", a
     .getByLabel("Source, attribution")
     .fill("Original test profile, permission granted.");
   await page.getByRole("button", { name: "Publish changes" }).click();
-  await expect(page.getByRole("status")).toContainText(
-    "Your changes were saved.",
-  );
+  await expect(
+    page.getByRole("status").filter({ hasText: "Your changes were saved." }),
+  ).toContainText("Your changes were saved.");
 });
 test("multilingual poetry, preserved attachments, validation and public reading", async ({
   page,
@@ -104,6 +104,41 @@ test("multilingual poetry, preserved attachments, validation and public reading"
   await page.getByLabel("اردو text", { exact: true }).fill("الفاظ کی روشنی");
   await page.getByRole("button", { name: "Preview current script" }).click();
   await expect(page.locator(".editor-preview")).toHaveAttribute("dir", "rtl");
+  for (const [language, label, title, body, direction] of [
+    ["hi", "हिन्दी", "नई सुबह", "शब्दों की रोशनी\nएक नई सुबह", "ltr"],
+    ["ar", "العربية", "صباح جديد", "نور الكلمات\nصباح جديد", "rtl"],
+    ["roman", "Roman Urdu", "Nayi subah", "Lafzon ki roshni", "ltr"],
+    ["fa", "فارسی", "صبح نو", "روشنایی واژه‌ها", "rtl"],
+  ]) {
+    await page.getByRole("button", { name: new RegExp(label) }).click();
+    await page.getByLabel(`${label} title`, { exact: true }).fill(title);
+    if (language === "hi") {
+      await page.locator("#hi_import").setInputFiles({
+        name: "invalid.txt",
+        mimeType: "text/plain",
+        buffer: Buffer.from([0xff]),
+      });
+      await expect(page.locator("main").getByRole("alert")).toContainText(
+        "UTF-8",
+      );
+      await expect(page.locator("#hi_body")).toHaveValue("");
+    }
+    await page.locator(`#${language}_import`).setInputFiles({
+      name: `${language}.txt`,
+      mimeType: "text/plain",
+      buffer: Buffer.from(body.replaceAll("\n", "\r\n"), "utf8"),
+    });
+    await expect(page.locator(`#${language}_body`)).toHaveValue(body);
+    await expect(page.locator(`#${language}_body`)).toHaveAttribute(
+      "dir",
+      direction,
+    );
+    await expect(page.locator(".editor-preview")).toHaveAttribute(
+      "dir",
+      direction,
+    );
+    await expect(page.locator(".editor-preview h2")).toHaveText(title);
+  }
   await page.getByLabel("Morning voice").check();
   await page.getByLabel("Find a recording").fill("Evening");
   await expect(page.getByLabel("Morning voice")).toBeHidden();
@@ -121,14 +156,33 @@ test("multilingual poetry, preserved attachments, validation and public reading"
     caret: "initial",
   });
   await page.getByRole("button", { name: "Publish changes" }).click();
-  await expect(page.getByRole("status")).toContainText(
-    "Your changes were saved.",
-  );
+  await expect(
+    page.getByRole("status").filter({ hasText: "Your changes were saved." }),
+  ).toContainText("Your changes were saved.");
   await page.goto(`/kalam/${slug}`);
   await expect(page.getByRole("heading", { name: "نئی صبح" })).toBeVisible();
   await expect(
     page.getByRole("heading", { name: "Morning voice" }),
   ).toBeVisible();
+  for (const [label, title, body, direction, tag] of [
+    ["हिन्दी", "नई सुबह", "शब्दों की रोशनी\nएक नई सुबह", "ltr", "hi"],
+    ["العربية", "صباح جديد", "نور الكلمات\nصباح جديد", "rtl", "ar"],
+    ["Roman Urdu", "Nayi subah", "Lafzon ki roshni", "ltr", "ur-Latn"],
+    ["فارسی", "صبح نو", "روشنایی واژه‌ها", "rtl", "fa"],
+    [
+      "English",
+      "Words for a new morning",
+      "A small light\nA new morning",
+      "ltr",
+      "en",
+    ],
+  ]) {
+    await page.getByRole("button", { name: label, exact: true }).click();
+    await expect(page.locator(".poem")).toHaveAttribute("lang", tag);
+    await expect(page.locator(".poem")).toHaveAttribute("dir", direction);
+    await expect(page.locator(".poem h2")).toHaveText(title);
+    await expect(page.locator(".poem p")).toHaveText(body);
+  }
 });
 test("unsaved changes are protected and editors cannot edit published records", async ({
   page,

@@ -1,7 +1,12 @@
 "use client";
 import { useState } from "react";
 import type { KalamText, Language } from "@/lib/types";
-import { languages, languageLabels, languageTags } from "@/lib/types";
+import {
+  languages,
+  languageLabels,
+  languageTags,
+  languageDirection,
+} from "@/lib/types";
 export function Reader({ texts }: { texts: KalamText[] }) {
   const [language, setLanguage] = useState<Language>(
     texts.some((t) => t.language === "ur") ? "ur" : texts[0]?.language || "en",
@@ -39,7 +44,7 @@ export function Reader({ texts }: { texts: KalamText[] }) {
       <div
         className="poem"
         lang={languageTags[language]}
-        dir={language === "ur" || language === "fa" ? "rtl" : "ltr"}
+        dir={languageDirection(language)}
       >
         <h2>{text?.title}</h2>
         <p style={{ fontSize: size }}>

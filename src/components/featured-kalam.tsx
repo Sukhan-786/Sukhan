@@ -2,7 +2,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import type { Kalam, Language } from "@/lib/types";
-import { languageTags } from "@/lib/types";
+import { languageTags, languageDirection, languageLabels } from "@/lib/types";
 import { Icon } from "./icon";
 export function FeaturedKalam({ items }: { items: Kalam[] }) {
   const [index, setIndex] = useState(0),
@@ -64,7 +64,7 @@ export function FeaturedKalam({ items }: { items: Kalam[] }) {
         <blockquote
           className="featured-verse"
           lang={languageTags[text.language]}
-          dir={text.language === "ur" || text.language === "fa" ? "rtl" : "ltr"}
+          dir={languageDirection(text.language)}
         >
           {text.body
             .split("\n")
@@ -138,13 +138,7 @@ export function FeaturedKalam({ items }: { items: Kalam[] }) {
               aria-pressed={language === t.language}
               onClick={() => setLanguage(t.language)}
             >
-              {t.language === "ur"
-                ? "اردو"
-                : t.language === "roman"
-                  ? "Roman"
-                  : t.language === "fa"
-                    ? "فارسی"
-                    : "English"}
+              {languageLabels[t.language]}
             </button>
           ))}
         </div>
