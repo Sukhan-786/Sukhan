@@ -9,9 +9,11 @@ import {
 export function DictionaryDefinition({
   entry,
   fullLink = true,
+  showHeading = true,
 }: {
   entry: DictionaryEntry;
   fullLink?: boolean;
+  showHeading?: boolean;
 }) {
   const Heading = fullLink ? "h3" : "h2";
   return (
@@ -19,7 +21,9 @@ export function DictionaryDefinition({
       className="dictionary-definition"
       aria-label={`Dictionary entry ${entry.word_id}`}
     >
-      <Heading lang="ur-Latn">{entry.roman || entry.word_id}</Heading>
+      {showHeading && (
+        <Heading lang="ur-Latn">{entry.roman || entry.word_id}</Heading>
+      )}
       <dl className="dictionary-spellings">
         {Object.entries(spellingFields).map(([language, field]) =>
           entry[field] ? (

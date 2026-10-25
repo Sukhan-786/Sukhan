@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Icon } from "./icon";
+import { MenuLink } from "./menu-link";
 const links = [
   { label: "POETS", href: "/artists" },
   { label: "KALAM", href: "/catalogue" },
@@ -9,11 +10,12 @@ const links = [
 function MoreLinks() {
   return (
     <>
-      <Link href="/catalogue?form=ghazal">Ghazals</Link>
-      <Link href="/catalogue?form=nazm">Nazms</Link>
-      <Link href="/catalogue?form=sher">Couplets</Link>
-      <Link href="/artists">Poets & artists</Link>
-      <Link href="/admin">Editorial studio</Link>
+      <MenuLink href="/catalogue?form=ghazal">Ghazals</MenuLink>
+      <MenuLink href="/catalogue?form=nazm">Nazms</MenuLink>
+      <MenuLink href="/catalogue?form=sher">Couplets</MenuLink>
+      <MenuLink href="/artists">Poets & artists</MenuLink>
+      <MenuLink href="/dictionary">Dictionary</MenuLink>
+      <MenuLink href="/admin">Editorial studio</MenuLink>
     </>
   );
 }
@@ -42,7 +44,6 @@ export function Header() {
           ))}
           <details className="more-menu">
             <summary>MORE</summary>
-            <Link href="/dictionary">Dictionary</Link>
             <div className="dropdown">
               <MoreLinks />
             </div>

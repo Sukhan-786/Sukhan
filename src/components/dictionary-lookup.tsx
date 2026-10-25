@@ -65,7 +65,11 @@ export function DictionaryLookup({
         </p>
       )}
       {state.entries.map((entry) => (
-        <DictionaryDefinition key={entry.id} entry={entry} />
+        <DictionaryDefinition
+          key={entry.id}
+          entry={entry}
+          showHeading={state.entries.length > 1}
+        />
       ))}
     </div>
   );
