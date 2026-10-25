@@ -3,6 +3,7 @@ import { createServer } from "node:http";
 import { readFile, readdir } from "node:fs/promises";
 import { PGlite } from "@electric-sql/pglite";
 import { meaningColumns } from "../../src/lib/word-meanings";
+import { dictionaryColumns } from "../../src/lib/dictionary";
 async function main() {
   const db = new PGlite();
   const admin = "a0000000-0000-4000-8000-000000000001",
@@ -220,6 +221,24 @@ async function main() {
               ],
             )
           ).rows[0].v;
+        else if (endpoint === "rpc/lookup_dictionary")
+          result = (
+            await db.query<{ v: unknown }>(
+              "select public.lookup_dictionary($1,$2) v",
+              [body.lookup_language, body.lookup_word],
+            )
+          ).rows[0].v;
+        else if (endpoint === "rpc/save_dictionary_entry")
+          result = (
+            await db.query<{ v: unknown }>(
+              "select public.save_dictionary_entry($1,$2::jsonb,$3::timestamptz) v",
+              [
+                body.record_id,
+                JSON.stringify(body.payload),
+                body.expected_updated_at,
+              ],
+            )
+          ).rows[0].v;
         else if (endpoint === "rpc/save_word_meaning")
           result = (
             await db.query<{ v: unknown }>(
@@ -238,6 +257,7 @@ async function main() {
             "media",
             "kalam",
             "word_meanings",
+            "dictionary_entries",
           ].includes(endpoint)
         ) {
           const table = endpoint;
@@ -252,6 +272,7 @@ async function main() {
             "performer_id",
             "kalam_id",
             "language",
+            "word_id",
           ]) {
             const v = url.searchParams.get(key);
             if (v?.startsWith("eq.")) {
@@ -309,7 +330,7 @@ async function main() {
                   : " order by updated_at desc,id desc";
             const rows = (
               await db.query<Record<string, unknown>>(
-                `select ${table === "word_meanings" ? meaningColumns : "*"} from public.${table}${where}${order} limit 500`,
+                `select ${table === "word_meanings" ? meaningColumns : table === "dictionary_entries" ? dictionaryColumns : "*"} from public.${table}${where}${order} limit 500`,
                 args,
               )
             ).rows;
