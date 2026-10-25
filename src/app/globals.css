@@ -3048,3 +3048,38 @@ footer .demo-banner {
     overflow: auto;
   }
 }
+
+/* Native script fonts and direction for multilingual editing and reading. */
+.script-tabs button[lang="hi"],
+.poem[lang="hi"],
+.poem[lang="hi"] h2,
+.poem[lang="hi"] p,
+.featured-verse[lang="hi"],
+.transcript[lang="hi"],
+.editor-preview[lang="hi"],
+.editor-preview[lang="hi"] h2,
+.studio-main .editor [lang="hi"] .field input:not([type="file"]),
+.studio-main .editor [lang="hi"] .poem-editor {
+  font-family:
+    "Noto Sans Devanagari", "Kohinoor Devanagari", Mangal, sans-serif;
+  font-style: normal;
+  line-height: 1.9;
+}
+.script-tabs button[lang="ar"],
+.poem[lang="ar"],
+.poem[lang="ar"] h2,
+.poem[lang="ar"] p,
+.featured-verse[lang="ar"],
+.transcript[lang="ar"],
+.editor-preview[lang="ar"],
+.editor-preview[lang="ar"] h2,
+.studio-main .editor [lang="ar"] .field input:not([type="file"]),
+.studio-main .editor [lang="ar"] .poem-editor {
+  font-family: "Noto Naskh Arabic", "Geeza Pro", "Traditional Arabic", serif;
+  font-style: normal;
+  line-height: 2.1;
+}
+.editor .text-import input[type="file"] {
+  max-width: 100%;
+  font: 14px/1.6 var(--sans);
+}
