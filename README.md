@@ -54,10 +54,14 @@ The actual hosted Auth/PostgREST path and authenticated CMS browser flow still n
 
 ## Pending
 
-Connect Supabase and provision staff accounts; verify authenticated saves in the browser and hosted API policies; add permission-cleared literature and recordings; configure the production origin; and select a new Sukhan repository and hosting target. Media upload, transcoding, streaming pipelines, YouTube/Vimeo embeds, reader accounts, bookmarks, collections, events, payment, analytics/marketing, password recovery, staff-invitation email flows, audit/version history and PWA/offline reading are future milestones.
+Connect Supabase and provision staff accounts; verify authenticated saves in the browser and hosted API policies; add permission-cleared literature and recordings; configure the production origin; and verify the dedicated Sukhan repository and hosting configuration. Media upload, transcoding, streaming pipelines, YouTube/Vimeo embeds, reader accounts, bookmarks, collections, events, payment, analytics/marketing, password recovery, staff-invitation email flows, audit/version history and PWA/offline reading are future milestones.
 
 This foundation uses plain text rather than a rich HTML editor. Profile names have English/default and Urdu fields; the four-script authoring model applies to kalam. Search currently uses normalized substring matching suitable for a small archive; ranked indexed search is a later scaling step. Directory/media/editor lists have explicit initial limits documented in the architecture guide.
 
 ## Visual revision
 
 Sukhan now follows the measured Rekhta typography and layout, with locally embedded LatoX, Merriweather and Mehr Nastaliq, a compact header, full-width banner, pink controls and centred poetry. See [DESIGN_COMPARISON.md](docs/DESIGN_COMPARISON.md) for measurements, font sources and remaining visual differences.
+
+## Editorial studio update
+
+See [ADMIN_STUDIO.md](docs/ADMIN_STUDIO.md) for searchable admin libraries, cursor navigation, draft counts, multilingual editing improvements and the separate admin browser suite. Run `npm run test:admin` after installing Chrome. Apply both SQL migrations in order, or let the configured Supabase GitHub integration apply the new one after verifying its migration history. Hosted staff account setup still requires the project owner.
