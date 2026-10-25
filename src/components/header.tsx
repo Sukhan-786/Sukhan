@@ -42,6 +42,7 @@ export function Header() {
           ))}
           <details className="more-menu">
             <summary>MORE</summary>
+            <Link href="/dictionary">Dictionary</Link>
             <div className="dropdown">
               <MoreLinks />
             </div>
