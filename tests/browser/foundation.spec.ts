@@ -1,6 +1,6 @@
 import { test, expect } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
-test("homepage, navigation and accessibility", async ({ page }) => {
+test("homepage, navigation and accessibility", async ({ page }, info) => {
   await page.goto("/");
   await expect(
     page.getByRole("heading", {
@@ -22,6 +22,29 @@ test("homepage, navigation and accessibility", async ({ page }) => {
       () => document.documentElement.scrollWidth <= window.innerWidth,
     ),
   ).toBe(true);
+  await page
+    .locator(
+      info.project.name === "mobile"
+        ? ".mobile-menu summary"
+        : ".more-menu summary",
+    )
+    .click();
+  const menu = page.getByRole("navigation", {
+    name:
+      info.project.name === "mobile"
+        ? "Expanded navigation"
+        : "Main navigation",
+    exact: true,
+  });
+  await menu.getByRole("link", { name: "Dictionary", exact: true }).click();
+  await expect(
+    page.getByRole("heading", { name: "Sukhan Dictionary", exact: true }),
+  ).toBeVisible();
+  await page.getByLabel("Word", { exact: true }).fill("dekhaa");
+  await page.getByRole("button", { name: "Look up word", exact: true }).click();
+  await expect(
+    page.getByText("No reviewed entries found yet.", { exact: true }),
+  ).toBeVisible();
 });
 test("search spans scripts, poet names, form filters and empty results", async ({
   page,
