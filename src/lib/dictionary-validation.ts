@@ -32,7 +32,31 @@ export const dictionaryImportSchema = z
     arabic: spelling,
     persian: spelling,
     part_of_speech: z.enum(partsOfSpeech),
-    english_meanings: z.array(z.string().trim().min(1).max(500)).min(1).max(20),
+    english_meanings: z
+      .array(z.string().trim().min(1).max(500))
+      .max(20)
+      .default([]),
+    arabic_meanings: z
+      .array(z.string().trim().min(1).max(500))
+      .max(20)
+      .default([]),
+    urdu_meanings: z
+      .array(z.string().trim().min(1).max(500))
+      .max(20)
+      .default([]),
+    wazan: z
+      .array(
+        z
+          .string()
+          .trim()
+          .regex(
+            /^[12]{1,40}$/,
+            "Wazan uses 1 for short and 2 for long syllables, such as 22 or 121.",
+          ),
+      )
+      .max(20)
+      .default([]),
+    wazan_note: z.string().trim().max(1000).default(""),
     root_word: z.string().trim().max(200).default(""),
     audio_url: audio,
   })
@@ -49,9 +73,17 @@ export const dictionarySaveSchema = z
     review_confirmed: z.boolean(),
   })
   .refine(
-    (v) => v.status !== "published" || (v.review_confirmed && !!v.source_note),
+    (v) =>
+      v.status !== "published" ||
+      (v.review_confirmed &&
+        !!v.source_note &&
+        v.entry.english_meanings.length +
+          v.entry.arabic_meanings.length +
+          v.entry.urdu_meanings.length >
+          0),
     {
-      message: "Add an attribution and confirm your review before publishing.",
+      message:
+        "Add a meaning in English, Arabic or Urdu, an attribution and confirm your review before publishing.",
       path: ["review_confirmed"],
     },
   );

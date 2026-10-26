@@ -22,7 +22,7 @@ export const partsOfSpeech = [
   "other",
 ] as const;
 export const dictionaryColumns =
-  "id,word_id,roman,urdu,hindi,english,arabic,persian,part_of_speech,english_meanings,root_word,audio_url,source_note,status,reviewed_at,updated_at";
+  "id,word_id,roman,urdu,hindi,english,arabic,persian,part_of_speech,english_meanings,arabic_meanings,urdu_meanings,wazan,wazan_note,root_word,audio_url,source_note,status,reviewed_at,updated_at";
 export type DictionaryEntry = {
   id: string;
   word_id: string;
@@ -34,6 +34,10 @@ export type DictionaryEntry = {
   persian: string;
   part_of_speech: string;
   english_meanings: string[];
+  arabic_meanings?: string[];
+  urdu_meanings?: string[];
+  wazan?: string[];
+  wazan_note?: string;
   root_word: string;
   audio_url: string | null;
   source_note: string;
