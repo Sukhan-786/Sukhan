@@ -21,7 +21,14 @@ export function languageDirection(language: Language): "rtl" | "ltr" {
     ? "rtl"
     : "ltr";
 }
-export const forms = ["ghazal", "nazm", "sher", "rubai", "prose"] as const;
+export const forms = [
+  "ghazal",
+  "nazm",
+  "sher",
+  "rubai",
+  "prose",
+  "literary-text",
+] as const;
 export type Status = "draft" | "published";
 export type StaffRole = "admin" | "editor";
 export type Artist = {

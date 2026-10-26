@@ -45,7 +45,7 @@ export const kalamSchema = z
         z.object({
           language: z.enum(languages),
           title: z.string().trim().min(1).max(300),
-          body: z.string().trim().min(1).max(100000),
+          body: z.string().trim().min(1).max(200000),
         }),
       )
       .min(1)

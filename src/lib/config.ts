@@ -10,9 +10,16 @@ export function supabaseConfig() {
   return { url, key };
 }
 export function siteUrl() {
-  const value = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
+  const value =
+    process.env.NEXT_PUBLIC_SITE_URL ||
+    (process.env.VERCEL_ENV === "production"
+      ? "https://sukhan.co.in"
+      : "http://localhost:3000");
   const url = new URL(value);
   if (!["https:", "http:"].includes(url.protocol))
     throw new Error("Invalid site URL");
-  return url;
+  // The verified custom domain is the canonical public address; test/local URLs stay explicit.
+  return url.hostname === "sukhan-blush.vercel.app"
+    ? new URL("https://sukhan.co.in")
+    : url;
 }
