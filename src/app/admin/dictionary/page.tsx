@@ -7,7 +7,12 @@ import { DictionaryEditor } from "@/components/dictionary-editor";
 export default async function Page({
   searchParams,
 }: {
-  searchParams: Promise<{ entry?: string; q?: string; notice?: string }>;
+  searchParams: Promise<{
+    entry?: string;
+    q?: string;
+    notice?: string;
+    ur?: string;
+  }>;
 }) {
   const query = await searchParams;
   if (query.entry && !z.uuid().safeParse(query.entry).success) notFound();
@@ -48,6 +53,11 @@ export default async function Page({
           Dictionary entry saved. Only reviewed, published entries are public.
         </p>
       )}
+      <p>
+        <Link href="/admin/dictionary/word-bank">
+          Urdu word bank · bulk import, search and wazan candidates →
+        </Link>
+      </p>
       <div className="dictionary-studio">
         <section aria-label="Dictionary entries">
           <h2>Entries</h2>
@@ -74,7 +84,8 @@ export default async function Page({
           </ul>
         </section>
         <DictionaryEditor
-          key={`${record?.id || "new"}:${record?.updated_at || ""}`}
+          key={`${record?.id || "new"}:${record?.updated_at || ""}:${query.ur || ""}`}
+          prefillUrdu={(query.ur || "").slice(0, 200)}
           record={record}
           role={role}
         />
