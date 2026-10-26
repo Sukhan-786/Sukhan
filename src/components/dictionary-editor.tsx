@@ -19,9 +19,11 @@ import { useClientReady } from "@/lib/use-client-ready";
 export function DictionaryEditor({
   record,
   role,
+  prefillUrdu = "",
 }: {
   record: DictionaryEntry | null;
   role: StaffRole;
+  prefillUrdu?: string;
 }) {
   const [state, action, pending] = useActionState(
     saveDictionary.bind(null, record?.id || null),
@@ -41,9 +43,14 @@ export function DictionaryEditor({
         "root_word",
         "audio_url",
         "source_note",
+        "wazan_note",
       ].map((k) => [k, String(record?.[k as keyof DictionaryEntry] || "")]),
     ),
-    part_of_speech: record?.part_of_speech || "verb",
+    urdu: record?.urdu || prefillUrdu,
+    part_of_speech: record?.part_of_speech || "other",
+    arabic_meanings: record?.arabic_meanings?.join("\n") || "",
+    urdu_meanings: record?.urdu_meanings?.join("\n") || "",
+    wazan: record?.wazan?.join("\n") || "",
     english_meanings: record?.english_meanings.join("\n") || "",
   }));
   const [status, setStatus] = useState(record?.status || "draft");
@@ -94,6 +101,9 @@ export function DictionaryEditor({
         ...entry,
         audio_url: entry.audio_url || "",
         english_meanings: entry.english_meanings.join("\n"),
+        arabic_meanings: entry.arabic_meanings.join("\n"),
+        urdu_meanings: entry.urdu_meanings.join("\n"),
+        wazan: entry.wazan.join("\n"),
       }));
       setStatus("draft");
       setReview(false);
@@ -221,9 +231,60 @@ export function DictionaryEditor({
             name="english_meanings"
             value={fields.english_meanings}
             onChange={(e) => change("english_meanings", e.target.value)}
-            required
             maxLength={10020}
             rows={5}
+          />
+          {(
+            [
+              ["arabic_meanings", "Arabic meanings — one per line", "ar"],
+              ["urdu_meanings", "Urdu meanings — one per line", "ur"],
+            ] as const
+          ).map(([name, label, lang]) => (
+            <div key={name}>
+              <label htmlFor={`dictionary-${name}`}>{label}</label>
+              <textarea
+                id={`dictionary-${name}`}
+                name={name}
+                value={fields[name]}
+                onChange={(e) => change(name, e.target.value)}
+                lang={lang}
+                dir="rtl"
+                rows={4}
+                maxLength={10020}
+              />
+            </div>
+          ))}
+          <p>
+            Spelling fields contain the word itself. Meaning fields contain
+            definitions. Add at least one definition before publishing.
+          </p>
+          <label htmlFor="dictionary-wazan">Wazan — one pattern per line</label>
+          <textarea
+            id="dictionary-wazan"
+            name="wazan"
+            value={fields.wazan}
+            onChange={(e) => change("wazan", e.target.value)}
+            dir="ltr"
+            rows={3}
+            maxLength={820}
+            aria-describedby="wazan-help"
+          />
+          <small id="wazan-help">
+            1 = short syllable; 2 = long syllable. Examples: 22, 121, 12. Read
+            left to right. Review against pronunciation; a word weight alone
+            does not establish a verse’s bahr.
+          </small>
+          <label htmlFor="dictionary-wazan-note">
+            Wazan pronunciation and context notes
+          </label>
+          <textarea
+            id="dictionary-wazan-note"
+            name="wazan_note"
+            value={fields.wazan_note}
+            onChange={(e) => change("wazan_note", e.target.value)}
+            dir="auto"
+            rows={3}
+            maxLength={1000}
           />
           <label>
             Root word
@@ -282,7 +343,8 @@ export function DictionaryEditor({
                 checked={review}
                 onChange={(e) => setReview(e.target.checked)}
               />
-              I reviewed the spellings, meanings and attribution.
+              I reviewed the spellings, meanings and attribution. I also checked
+              any wazan against its pronunciation.
             </label>
           )}
           <button className="button" type="submit">

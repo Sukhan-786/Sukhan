@@ -16,6 +16,7 @@ export function DictionaryDefinition({
   showHeading?: boolean;
 }) {
   const Heading = fullLink ? "h3" : "h2";
+  const Subheading = fullLink && showHeading ? "h4" : "h3";
   return (
     <article
       className="dictionary-definition"
@@ -45,6 +46,34 @@ export function DictionaryDefinition({
           <li key={i}>{m}</li>
         ))}
       </ul>
+      {(
+        [
+          ["Arabic meanings", entry.arabic_meanings, "ar"],
+          ["Urdu meanings", entry.urdu_meanings, "ur"],
+        ] as const
+      ).map(([label, meanings, lang]) =>
+        meanings?.length ? (
+          <section key={lang} aria-label={label}>
+            <Subheading>{label}</Subheading>
+            <ul lang={lang} dir="rtl">
+              {meanings.map((m, i) => (
+                <li key={i}>{m}</li>
+              ))}
+            </ul>
+          </section>
+        ) : null,
+      )}
+      {!entry.arabic_meanings?.length && (
+        <p>Arabic meanings have not been added yet.</p>
+      )}
+      {!!entry.wazan?.length && (
+        <section aria-label="Reviewed wazan">
+          <Subheading>Wazan · وزن</Subheading>
+          <p dir="ltr">{entry.wazan.join(" / ")}</p>
+          <small>1 = short; 2 = long. Patterns read left to right.</small>
+          {entry.wazan_note && <p dir="auto">{entry.wazan_note}</p>}
+        </section>
+      )}
       {entry.root_word && (
         <p>
           Root word: <span dir="auto">{entry.root_word}</span>
