@@ -3408,3 +3408,30 @@ footer .demo-banner {
     order: 2;
   }
 }
+
+.word-bank-import {
+  border: 1px solid var(--line, #ddd);
+  padding: 1.5rem;
+  margin-block: 2rem;
+  display: grid;
+  gap: 0.8rem;
+}
+.word-bank-import progress {
+  width: 100%;
+  height: 1rem;
+  accent-color: #ec0050;
+}
+.dictionary-list strong[lang="ur"] {
+  font-family: var(--font-urdu), serif;
+  font-size: 1.5rem;
+  line-height: 2.5;
+}
+.dictionary-list + nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2rem;
+  margin-block: 1.5rem;
+}
+.dictionary-definition h4 {
+  margin-block: 1rem 0.5rem;
+}
