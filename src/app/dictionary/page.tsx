@@ -6,6 +6,8 @@ import { dictionaryColumns, type DictionaryEntry } from "@/lib/dictionary";
 import { languages, languageLabels, type Language } from "@/lib/types";
 export const dynamic = "force-dynamic";
 export const metadata = {
+  robots: { index: false, follow: true },
+  alternates: { canonical: "/dictionary" },
   title: "Sukhan Dictionary",
   description:
     "Reviewed spellings, roots and meanings for the words of Sukhan.",
