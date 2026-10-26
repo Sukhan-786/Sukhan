@@ -1,5 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
+import { WordBankDefinition } from "./word-bank-definition";
+import type { WordBankRow } from "@/lib/word-bank";
 import type { DictionaryEntry } from "@/lib/dictionary";
 import type { Language } from "@/lib/types";
 import { DictionaryDefinition } from "./dictionary-definition";
@@ -12,9 +14,10 @@ export function DictionaryLookup({
 }) {
   const [state, setState] = useState<{
     entries: DictionaryEntry[];
+    wordBank: WordBankRow[];
     loading: boolean;
     error: string;
-  }>({ entries: [], loading: true, error: "" });
+  }>({ entries: [], wordBank: [], loading: true, error: "" });
   const [attempt, setAttempt] = useState(0);
   useEffect(() => {
     const controller = new AbortController();
@@ -25,14 +28,23 @@ export function DictionaryLookup({
       .then(async (response) => {
         if (!response.ok)
           throw Error("Dictionary lookup could not be completed.");
-        const data = (await response.json()) as { entries: DictionaryEntry[] };
+        const data = (await response.json()) as {
+          entries: DictionaryEntry[];
+          wordBank?: WordBankRow[];
+        };
         if (!controller.signal.aborted)
-          setState({ entries: data.entries, loading: false, error: "" });
+          setState({
+            entries: data.entries,
+            wordBank: data.wordBank || [],
+            loading: false,
+            error: "",
+          });
       })
       .catch(() => {
         if (!controller.signal.aborted)
           setState({
             entries: [],
+            wordBank: [],
             loading: false,
             error: "Dictionary lookup is unavailable. Please try again.",
           });
@@ -50,7 +62,7 @@ export function DictionaryLookup({
             type="button"
             className="button secondary"
             onClick={() => {
-              setState({ entries: [], loading: true, error: "" });
+              setState({ entries: [], wordBank: [], loading: true, error: "" });
               setAttempt((n) => n + 1);
             }}
           >
@@ -58,12 +70,18 @@ export function DictionaryLookup({
           </button>
         </>
       )}
-      {!state.loading && !state.error && state.entries.length === 0 && (
-        <p>
-          No reviewed dictionary entry is available for this word in this script
-          yet.
-        </p>
-      )}
+      {!state.loading &&
+        !state.error &&
+        state.entries.length === 0 &&
+        state.wordBank.length === 0 && (
+          <p>
+            No reviewed dictionary entry is available for this word in this
+            script yet.
+          </p>
+        )}
+      {state.wordBank.map((entry) => (
+        <WordBankDefinition key={entry.headword} entry={entry} inReader />
+      ))}
       {state.entries.map((entry) => (
         <DictionaryDefinition
           key={entry.id}

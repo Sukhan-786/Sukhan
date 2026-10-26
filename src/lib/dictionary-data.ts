@@ -24,3 +24,14 @@ export async function getDictionaryEntry(wordId: string) {
   if (error) throw new Error("The dictionary entry could not be loaded.");
   return data as DictionaryEntry | null;
 }
+
+export async function lookupWordBank(language: Language, word: string) {
+  if (language !== "ur") return [];
+  const db = createPublicClient();
+  if (!db) return [];
+  const { data, error } = await db.rpc("lookup_urdu_word_bank", {
+    lookup_word: word,
+  });
+  if (error) throw Error("The source word bank could not be loaded.");
+  return (data || []) as import("./word-bank").WordBankRow[];
+}

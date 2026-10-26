@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { lookupDictionary } from "@/lib/dictionary-data";
+import { WordBankDefinition } from "@/components/word-bank-definition";
+import { lookupDictionary, lookupWordBank } from "@/lib/dictionary-data";
 import { createPublicClient } from "@/lib/supabase/public";
 import { dictionaryColumns, type DictionaryEntry } from "@/lib/dictionary";
 import { languages, languageLabels, type Language } from "@/lib/types";
@@ -33,6 +34,8 @@ export default async function Page({
       entries = (data || []) as DictionaryEntry[];
     }
   }
+  const wordBank =
+    q && !entries.length ? await lookupWordBank(language, q) : [];
   return (
     <section className="section">
       <p className="eyebrow">Words in their many voices</p>
@@ -69,6 +72,15 @@ export default async function Page({
         ))}
       </ul>
       {!entries.length && <p>No reviewed entries found yet.</p>}
+      {wordBank.map((e) => (
+        <WordBankDefinition key={e.headword} entry={e} />
+      ))}
+      <p>
+        <Link href="/dictionary/word-bank">
+          Browse the Urdu source word bank and wazan candidates
+        </Link>{" "}
+        · <Link href="/dictionary/sources">Data sources</Link>
+      </p>
       {!q && (
         <p>
           Showing up to 50 published entries. Use the word lookup to find

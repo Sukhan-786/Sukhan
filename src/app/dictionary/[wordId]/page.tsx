@@ -14,7 +14,13 @@ export async function generateMetadata({
   return entry
     ? {
         title: `${entry.roman || entry.word_id} — Sukhan Dictionary`,
-        description: entry.english_meanings.join("; ").slice(0, 160),
+        description: [
+          ...entry.english_meanings,
+          ...(entry.arabic_meanings || []),
+          ...(entry.urdu_meanings || []),
+        ]
+          .join("; ")
+          .slice(0, 160),
         alternates: { canonical: `/dictionary/${entry.word_id}` },
       }
     : { title: "Word not found", robots: { index: false } };

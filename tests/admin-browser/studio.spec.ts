@@ -429,6 +429,10 @@ test("shared dictionary imports JSON and automatically resolves repeated poem wo
     hindi: "देखा",
     part_of_speech: "verb",
     english_meanings: ["saw", "seen", "observed"],
+    arabic_meanings: ["رأى", "شاهد"],
+    urdu_meanings: ["نظر سے مشاہدہ کیا"],
+    wazan: ["22"],
+    wazan_note: "User example; checked for this isolated test.",
     root_word: "dekhnaa",
     audio_url: null,
   };
@@ -456,7 +460,7 @@ test("shared dictionary imports JSON and automatically resolves repeated poem wo
   const lookup = await page.request.get(
     "/api/dictionary?language=roman&word=dekhaa",
   );
-  expect(await lookup.json()).toEqual({ entries: [] });
+  expect(await lookup.json()).toEqual({ entries: [], wordBank: [] });
   const bad = await page.request.get(
     "/api/dictionary?language=bad&word=dekhaa",
   );
@@ -532,6 +536,10 @@ test("shared dictionary imports JSON and automatically resolves repeated poem wo
   await expect(dialog.getByText("دیکھا", { exact: true })).toBeVisible();
   await expect(dialog.getByText("देखा", { exact: true })).toBeVisible();
   await expect(dialog.getByText("verb", { exact: true })).toBeVisible();
+  await expect(dialog.getByText("رأى", { exact: true })).toBeVisible();
+  await expect(
+    dialog.getByRole("region", { name: "Reviewed wazan" }),
+  ).toContainText("22");
   await expect(dialog.getByText("dekhnaa", { exact: true })).toBeVisible();
   await expect(dialog.locator("audio")).toHaveCount(0);
   expect(
@@ -573,9 +581,98 @@ test("shared dictionary imports JSON and automatically resolves repeated poem wo
   const archived = await page.request.get(
     "/api/dictionary?language=roman&word=dekhaa",
   );
-  expect(await archived.json()).toEqual({ entries: [] });
+  expect(await archived.json()).toEqual({ entries: [], wordBank: [] });
   await page.goto(`/dictionary/${wordId}`);
   await expect(
     page.getByRole("heading", { name: "This page isn’t in the library." }),
   ).toBeVisible();
+});
+
+test("large Urdu word bank imports resumably and exposes labelled candidates without inventing Arabic meanings", async ({
+  page,
+}, info) => {
+  test.setTimeout(240000);
+  await login(page);
+  await page.goto("/admin/dictionary/word-bank");
+  const progress = page.getByRole("progressbar", {
+    name: "Word bank import progress",
+  });
+  if ((await progress.getAttribute("value")) !== "154781") {
+    await page
+      .getByRole("button", {
+        name: "Import 154,781 Urdu word forms",
+        exact: true,
+      })
+      .click();
+    await expect
+      .poll(async () => Number(await progress.getAttribute("value")), {
+        timeout: 60000,
+      })
+      .toBeGreaterThan(0);
+    await page
+      .getByRole("button", { name: "Pause after current batch" })
+      .click();
+    await expect(
+      page.getByRole("button", {
+        name: "Resume word bank import",
+        exact: true,
+      }),
+    ).toBeEnabled({ timeout: 30000 });
+    await page.reload();
+    await page
+      .getByRole("button", { name: "Resume word bank import", exact: true })
+      .click();
+    await expect(
+      page.getByRole("button", { name: "Import complete", exact: true }),
+    ).toBeVisible({ timeout: 150000 });
+  }
+  await expect(progress).toHaveAttribute("value", "154781");
+  await expect(page.locator("main")).toContainText("154,781 new forms saved");
+  await page.getByLabel("Urdu word or prefix", { exact: true }).fill("چلو");
+  await page
+    .getByRole("button", { name: "Search word bank", exact: true })
+    .click();
+  await expect(page.locator(".dictionary-list strong").first()).toHaveText(
+    "چلو",
+  );
+  expect(
+    (await new AxeBuilder({ page }).include(".admin-layout").analyze())
+      .violations,
+  ).toEqual([]);
+  await page.screenshot({
+    path: `test-results/word-bank-admin-${info.project.name}.png`,
+    fullPage: true,
+  });
+  await page
+    .getByRole("link", { name: "Create reviewed definition" })
+    .first()
+    .click();
+  await expect(page.getByLabel("اردو spelling", { exact: true })).toHaveValue(
+    "چلو",
+  );
+  await expect(
+    page.getByLabel("Arabic meanings — one per line", { exact: true }),
+  ).toHaveValue("");
+  const response = await page.request.get(
+    "/api/dictionary?language=ur&word=" + encodeURIComponent("چلو"),
+  );
+  expect(response.status()).toBe(200);
+  const result = await response.json();
+  expect(result.entries).toEqual([]);
+  expect(result.wordBank[0].headword).toBe("چلو");
+  await page.goto("/dictionary?language=ur&q=" + encodeURIComponent("چلو"));
+  await expect(page.locator(".dictionary-definition")).toContainText(
+    "Wazan candidates",
+  );
+  await expect(page.locator(".dictionary-definition")).toContainText(
+    "Arabic meanings have not been added",
+  );
+  await expect(page.locator(".dictionary-definition")).toContainText("1(1/2)");
+  expect(
+    (await new AxeBuilder({ page }).include("main").analyze()).violations,
+  ).toEqual([]);
+  await page.screenshot({
+    path: `test-results/word-bank-public-${info.project.name}.png`,
+    fullPage: true,
+  });
 });

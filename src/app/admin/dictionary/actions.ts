@@ -24,6 +24,7 @@ export async function saveDictionary(
       "persian",
       "part_of_speech",
       "root_word",
+      "wazan_note",
     ].map((k) => [k, get(k)]),
   );
   const parsed = dictionarySaveSchema.safeParse({
@@ -32,6 +33,17 @@ export async function saveDictionary(
       english_meanings: get("english_meanings")
         .split("\n")
         .map((s) => s.trim())
+        .filter(Boolean),
+      arabic_meanings: get("arabic_meanings")
+        .split("\n")
+        .map((s) => s.trim())
+        .filter(Boolean),
+      urdu_meanings: get("urdu_meanings")
+        .split("\n")
+        .map((s) => s.trim())
+        .filter(Boolean),
+      wazan: get("wazan")
+        .split(/[\s,]+/)
         .filter(Boolean),
       audio_url: get("audio_url") || null,
     },

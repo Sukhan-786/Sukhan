@@ -14,7 +14,7 @@ npm run dev
 Open http://127.0.0.1:3000. With no Supabase variables, public pages use two clearly marked original sample works. This mode is read-only, the CMS is locked, and search engines receive `noindex`. An invalid or unavailable configured database produces an error; it never silently falls back to samples.
 
 ```sh
-npm run check       # lint, TypeScript, 49 automated tests, production build
+npm run check       # lint, TypeScript, 54 automated tests, production build
 npm run test:e2e    # 16 desktop/mobile browser tests; requires Chrome and a completed build
 npm start          # serve the production build
 ```
@@ -73,3 +73,7 @@ Saved works have a **Manage reviewed word meanings** link. Editors prepare conte
 ## Shared dictionary
 
 Every poem word can open a reviewed shared dictionary entry, with poem-specific meanings taking priority. The protected **Dictionary** admin page supports the supplied JSON format, draft entry, administrator review and publication. See [DICTIONARY.md](docs/DICTIONARY.md). Unknown words are explicit; no translations are generated automatically.
+
+## Large Urdu word bank and wazan
+
+The sourced corpus contains 154,781 word forms and 130,445 candidate weights. Admin supports resumable import, Urdu prefix search, Arabic/Urdu definitions, numeric wazan and pronunciation notes. Source candidates remain distinct from reviewed definitions; mass Arabic definitions and complete verse/bahr scansion are pending. See [URDU_WORD_BANK.md](docs/URDU_WORD_BANK.md) for migration, import, coverage, licenses and verification.
