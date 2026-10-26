@@ -161,6 +161,7 @@ test("every exposed table has RLS enabled", async () => {
       "media",
       "kalam_media",
       "word_meanings",
+      "dictionary_entries",
     ].sort(),
   );
   assert.ok(r.rows.every((t) => t.relrowsecurity));

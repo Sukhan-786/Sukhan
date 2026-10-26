@@ -415,3 +415,167 @@ test("reviewed word meanings publish by occurrence, support Hindi/Arabic and req
   await page.getByRole("button", { name: "English", exact: true }).click();
   await expect(page.locator(".meaning-word")).toHaveCount(0);
 });
+
+test("shared dictionary imports JSON and automatically resolves repeated poem words after review", async ({
+  page,
+}, info) => {
+  test.setTimeout(120000);
+  await login(page);
+  const wordId = `dekhaa-${Date.now()}`;
+  const example = {
+    word_id: wordId,
+    roman: "dekhaa",
+    urdu: "دیکھا",
+    hindi: "देखा",
+    part_of_speech: "verb",
+    english_meanings: ["saw", "seen", "observed"],
+    root_word: "dekhnaa",
+    audio_url: null,
+  };
+  await page.goto("/admin/dictionary");
+  await page.getByText("Import one word from JSON", { exact: true }).click();
+  await page
+    .getByLabel("Dictionary JSON", { exact: true })
+    .fill(JSON.stringify(example));
+  await page.getByRole("button", { name: "Load JSON into form" }).click();
+  await expect(page.getByLabel("Word ID", { exact: true })).toHaveValue(wordId);
+  await expect(page.getByLabel("اردو spelling", { exact: true })).toHaveValue(
+    "دیکھا",
+  );
+  await expect(
+    page.getByLabel("English meanings — one per line", { exact: true }),
+  ).toHaveValue("saw\nseen\nobserved");
+  await page
+    .getByRole("button", { name: "Save dictionary draft", exact: true })
+    .click();
+  await expect(page).toHaveURL(/entry=[a-f0-9-]+&notice=saved/);
+  await expect(
+    page.getByRole("status").filter({ hasText: "Dictionary entry saved." }),
+  ).toBeVisible();
+  const entryUrl = page.url();
+  const lookup = await page.request.get(
+    "/api/dictionary?language=roman&word=dekhaa",
+  );
+  expect(await lookup.json()).toEqual({ entries: [] });
+  const bad = await page.request.get(
+    "/api/dictionary?language=bad&word=dekhaa",
+  );
+  expect(bad.status()).toBe(400);
+  await page
+    .getByLabel("Dictionary status", { exact: true })
+    .selectOption("published");
+  await page
+    .getByRole("button", { name: "Publish reviewed dictionary entry" })
+    .click();
+  await expect(page.locator("main").getByRole("alert")).toContainText(
+    "attribution",
+  );
+  await page
+    .getByLabel("Source or editorial attribution", { exact: true })
+    .fill("User-provided example reviewed for the isolated test.");
+  await page.getByLabel("I reviewed the spellings").check();
+  const old = await page.locator('input[name="version"]').inputValue();
+  await page
+    .getByRole("button", { name: "Publish reviewed dictionary entry" })
+    .click();
+  await expect(page.locator('input[name="version"]')).not.toHaveValue(old);
+  await expect(page.locator("form[aria-busy]")).toHaveAttribute(
+    "aria-busy",
+    "false",
+  );
+  await expect(page.getByLabel("Word ID", { exact: true })).toHaveValue(wordId);
+  expect(
+    (await new AxeBuilder({ page }).include(".admin-layout").analyze())
+      .violations,
+  ).toEqual([]);
+  await page.screenshot({
+    path: `test-results/dictionary-admin-${info.project.name}.png`,
+    fullPage: true,
+  });
+  const slug = `dictionary-poem-${Date.now()}`;
+  await page.goto("/admin/kalam/new");
+  await page.getByLabel("URL slug", { exact: true }).fill(slug);
+  await page
+    .getByLabel("Poet / author")
+    .selectOption({ label: "Studio Poet (published)" });
+  for (const [label, title, body] of [
+    ["Roman Urdu", "An original line", "dekhaa,  dekhaa.\nmystery"],
+    ["اردو", "دیکھا", "دیکھا"],
+    ["हिन्दी", "देखा", "देखा"],
+  ]) {
+    await page
+      .getByRole("group", { name: "Editor language" })
+      .getByRole("button", { name: new RegExp(label) })
+      .click();
+    await page.getByLabel(`${label} title`, { exact: true }).fill(title);
+    await page.getByLabel(`${label} text`, { exact: true }).fill(body);
+  }
+  await page
+    .getByLabel("Source, attribution")
+    .fill("Original isolated test line.");
+  await page.getByLabel("Publication status").selectOption("published");
+  await page.getByRole("button", { name: "Publish changes" }).click();
+  await expect(
+    page.getByRole("status").filter({ hasText: "Your changes were saved." }),
+  ).toBeVisible();
+  await page.goto(`/kalam/${slug}`);
+  await page.getByRole("button", { name: "Roman Urdu", exact: true }).click();
+  await expect(page.locator(".poem p")).toHaveText("dekhaa,  dekhaa.\nmystery");
+  const words = page.getByRole("button", {
+    name: "Dictionary meaning of dekhaa",
+    exact: true,
+  });
+  await expect(words).toHaveCount(2);
+  await words.nth(1).click();
+  const dialog = page.getByRole("dialog");
+  await expect(dialog.getByText("saw", { exact: true })).toBeVisible();
+  await expect(dialog.getByText("دیکھا", { exact: true })).toBeVisible();
+  await expect(dialog.getByText("देखा", { exact: true })).toBeVisible();
+  await expect(dialog.getByText("verb", { exact: true })).toBeVisible();
+  await expect(dialog.getByText("dekhnaa", { exact: true })).toBeVisible();
+  await expect(dialog.locator("audio")).toHaveCount(0);
+  expect(
+    (await new AxeBuilder({ page }).include(".reading-shell").analyze())
+      .violations,
+  ).toEqual([]);
+  await page.screenshot({
+    path: `test-results/dictionary-reader-${info.project.name}.png`,
+    fullPage: false,
+  });
+  await page.keyboard.press("Escape");
+  await expect(words.nth(1)).toBeFocused();
+  await page
+    .getByRole("button", { name: "Dictionary meaning of mystery", exact: true })
+    .click();
+  await expect(dialog).toContainText("No reviewed dictionary entry");
+  await page.keyboard.press("Escape");
+  for (const label of ["اردو", "हिन्दी"]) {
+    await page
+      .getByRole("group", { name: "Reading language" })
+      .getByRole("button", { name: label, exact: true })
+      .click();
+    await page.locator(".dictionary-word").first().click();
+    await expect(dialog.getByText("saw", { exact: true })).toBeVisible();
+    await page.keyboard.press("Escape");
+  }
+  await page.goto(`/dictionary/${wordId}`);
+  await expect(page.getByRole("heading", { level: 1 })).toHaveText("dekhaa");
+  await expect(page.locator(".dictionary-definition")).toContainText(
+    "observed",
+  );
+  await page.goto(entryUrl);
+  await page
+    .getByLabel("Dictionary status", { exact: true })
+    .selectOption("archived");
+  const version = await page.locator('input[name="version"]').inputValue();
+  await page.getByRole("button", { name: "Archive dictionary entry" }).click();
+  await expect(page.locator('input[name="version"]')).not.toHaveValue(version);
+  const archived = await page.request.get(
+    "/api/dictionary?language=roman&word=dekhaa",
+  );
+  expect(await archived.json()).toEqual({ entries: [] });
+  await page.goto(`/dictionary/${wordId}`);
+  await expect(
+    page.getByRole("heading", { name: "This page isn’t in the library." }),
+  ).toBeVisible();
+});

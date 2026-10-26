@@ -10,6 +10,7 @@ export function AdminNav() {
         ["/admin/kalam", "Kalam", "02"],
         ["/admin/artists", "Poets & artists", "03"],
         ["/admin/media", "Media library", "04"],
+        ["/admin/dictionary", "Dictionary", "05"],
       ].map(([href, label, number]) => {
         const active =
           href === "/admin"

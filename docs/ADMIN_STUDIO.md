@@ -24,7 +24,7 @@ Admin roles must be assigned by the trusted project owner to an existing Auth UU
 
 ## Verification
 
-`npm run check` runs lint, TypeScript, 42 application/database/component tests and the production build. `npm run test:e2e` covers 16 public desktop/mobile journeys. `npm run test:admin` covers 12 desktop/mobile journeys using an isolated loopback fixture backed by actual PostgreSQL migrations in PGlite: sign-in contract, dashboard/filter/cursor behavior, poet publication, validation preservation, multilingual publication with an attachment, public reading, unsaved navigation, editor restrictions and reader denial. Axe checks cover the archive and editor; this is not a complete manual accessibility audit.
+`npm run check` runs lint, TypeScript, 49 application/database/component tests and the production build. `npm run test:e2e` covers 16 public desktop/mobile journeys. `npm run test:admin` covers 14 desktop/mobile journeys using an isolated loopback fixture backed by actual PostgreSQL migrations in PGlite: sign-in contract, dashboard/filter/cursor behavior, poet publication, validation preservation, multilingual publication with an attachment, public reading, unsaved navigation, editor restrictions and reader denial. Axe checks cover the archive and editor; this is not a complete manual accessibility audit.
 
 The fixture uses synthetic example.test accounts. It implements the Auth/REST calls needed by these journeys; it is not the hosted Supabase stack. Hosted login, real account setup, advisors and CMS saves must still be checked on the selected project. Real media playback and caption accuracy require approved media assets.
 

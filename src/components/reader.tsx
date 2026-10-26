@@ -4,6 +4,7 @@ import { useClientReady } from "@/lib/use-client-ready";
 import {
   meaningLanguages,
   meaningSegments,
+  wordTokens,
   type WordMeaning,
 } from "@/lib/word-meanings";
 import type { KalamText, Language } from "@/lib/types";
@@ -13,6 +14,7 @@ import {
   languageTags,
   languageDirection,
 } from "@/lib/types";
+import { DictionaryLookup } from "./dictionary-lookup";
 export function Reader({
   texts,
   meanings = [],
@@ -26,13 +28,19 @@ export function Reader({
   const ready = useClientReady();
   const [size, setSize] = useState(28);
   const [selected, setSelected] = useState<WordMeaning | null>(null);
+  const [dictionaryWord, setDictionaryWord] = useState<{
+    word: string;
+    language: Language;
+  } | null>(null);
   const dialog = useRef<HTMLDialogElement>(null);
   const opener = useRef<HTMLButtonElement | null>(null);
   const titleId = useId();
   useEffect(() => {
-    if (selected && !dialog.current?.open) dialog.current?.showModal();
-    if (!selected && dialog.current?.open) dialog.current.close();
-  }, [selected]);
+    if ((selected || dictionaryWord) && !dialog.current?.open)
+      dialog.current?.showModal();
+    if (!selected && !dictionaryWord && dialog.current?.open)
+      dialog.current.close();
+  }, [selected, dictionaryWord]);
   const text = texts.find((t) => t.language === language);
   const available = meanings.filter((m) => m.language === language);
   return (
@@ -48,6 +56,7 @@ export function Reader({
               onClick={() => {
                 setLanguage(lang);
                 setSelected(null);
+                setDictionaryWord(null);
               }}
               lang={languageTags[lang]}
             >
@@ -67,11 +76,10 @@ export function Reader({
           />
         </label>
       </div>
-      {available.length > 0 && (
-        <p className="meaning-hint">
-          Select an underlined word or phrase for its reviewed meaning.
-        </p>
-      )}
+      <p className="meaning-hint">
+        Select a word for the dictionary. Underlined passages have a meaning
+        reviewed for this poem.
+      </p>
       <div
         className="poem"
         lang={languageTags[language]}
@@ -91,13 +99,51 @@ export function Reader({
                     aria-label={`Meaning of ${part.text}`}
                     onClick={(event) => {
                       opener.current = event.currentTarget;
+                      setDictionaryWord(null);
                       setSelected(part.meaning!);
                     }}
                   >
                     {part.text}
                   </button>
                 ) : (
-                  <span key={index}>{part.text}</span>
+                  <span key={index}>
+                    {(() => {
+                      const points = Array.from(part.text);
+                      let end = 0;
+                      const segments = wordTokens(part.text).map((token) => {
+                        const before = points.slice(end, token.start).join("");
+                        end = token.end;
+                        return (
+                          <span key={token.start}>
+                            {before}
+                            <button
+                              type="button"
+                              className="dictionary-word"
+                              disabled={!ready}
+                              aria-haspopup="dialog"
+                              aria-label={`Dictionary meaning of ${token.surface}`}
+                              onClick={(event) => {
+                                opener.current = event.currentTarget;
+                                setSelected(null);
+                                setDictionaryWord({
+                                  word: token.surface,
+                                  language,
+                                });
+                              }}
+                            >
+                              {token.surface}
+                            </button>
+                          </span>
+                        );
+                      });
+                      return (
+                        <>
+                          {segments}
+                          {points.slice(end).join("")}
+                        </>
+                      );
+                    })()}
+                  </span>
                 ),
               )
             : "This script is not available yet."}
@@ -109,6 +155,7 @@ export function Reader({
         aria-labelledby={titleId}
         onClose={() => {
           setSelected(null);
+          setDictionaryWord(null);
           if (opener.current?.isConnected) opener.current.focus();
         }}
         onClick={(event) => {
@@ -125,12 +172,31 @@ export function Reader({
         </button>
         <h2
           id={titleId}
-          lang={selected ? languageTags[selected.language] : undefined}
-          dir={selected ? languageDirection(selected.language) : undefined}
+          lang={
+            selected
+              ? languageTags[selected.language]
+              : dictionaryWord
+                ? languageTags[dictionaryWord.language]
+                : undefined
+          }
+          dir={
+            selected
+              ? languageDirection(selected.language)
+              : dictionaryWord
+                ? languageDirection(dictionaryWord.language)
+                : undefined
+          }
         >
-          {selected?.surface || "Word meaning"}
+          {selected?.surface || dictionaryWord?.word || "Word meaning"}
         </h2>
-        <p className="meaning-reviewed">Reviewed for this poem</p>
+        {selected && <p className="meaning-reviewed">Reviewed for this poem</p>}
+        {dictionaryWord && (
+          <DictionaryLookup
+            key={`${dictionaryWord.language}:${dictionaryWord.word}`}
+            word={dictionaryWord.word}
+            language={dictionaryWord.language}
+          />
+        )}
         <dl>
           {selected &&
             meaningLanguages.map((l) =>
