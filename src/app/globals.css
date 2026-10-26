@@ -1257,12 +1257,12 @@ h3 {
   color: var(--banner-gold);
   margin-bottom: 14px;
 }
-.banner-copy h1 {
+.banner-copy h2 {
   font: 700 clamp(40px, 5.4vw, 90px)/1.03 var(--sans);
   letter-spacing: 1px;
   margin: 0 0 14px;
 }
-.banner-copy h1 span {
+.banner-copy h2 span {
   display: block;
 }
 .banner-copy .banner-subtitle {
@@ -1869,7 +1869,7 @@ footer .demo-banner {
   .home-banner {
     min-height: 280px;
   }
-  .banner-copy h1 {
+  .banner-copy h2 {
     font-size: 55px;
   }
   .banner-copy .banner-subtitle {
@@ -2007,7 +2007,7 @@ footer .demo-banner {
     letter-spacing: 2px;
     margin-bottom: 9px;
   }
-  .banner-copy h1 {
+  .banner-copy h2 {
     font-size: clamp(30px, 6.6vw, 48px);
     margin-bottom: 10px;
   }

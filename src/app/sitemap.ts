@@ -1,23 +1,28 @@
 import type { MetadataRoute } from "next";
-import { listKalam, listArtists } from "@/lib/data";
+import { listArtists } from "@/lib/data";
+import { sitemapPage } from "@/lib/sitemap-data";
 import { siteUrl } from "@/lib/config";
+// A small core sitemap. The index and numbered metadata-only sitemaps cover the complete library.
+export const dynamic = "force-dynamic";
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const base = siteUrl();
-  const works = [];
-  for (let page = 1; page <= 1000; page++) {
-    const batch = await listKalam({ page });
-    works.push(...batch.items);
-    if (!batch.hasNext) break;
-  }
-  const artists = await listArtists();
+  const [artists, first] = await Promise.all([
+      listArtists(),
+      sitemapPage("poetry", 0),
+    ]),
+    base = siteUrl();
   return [
-    ...["", "/catalogue", "/artists", "/media"].map((path) => ({
-      url: new URL(path, base).href,
-    })),
-    ...works.map((k) => ({
-      url: new URL(`/kalam/${k.slug}`, base).href,
+    ...[
+      "/",
+      "/catalogue",
+      "/artists",
+      "/media",
+      "/dictionary",
+      "/poetry-sources",
+    ].map((p) => ({ url: new URL(p, base).href })),
+    ...artists.map((a) => ({ url: new URL(`/artists/${a.slug}`, base).href })),
+    ...first.map((k) => ({
+      url: new URL(k.path, base).href,
       lastModified: k.updated_at,
     })),
-    ...artists.map((a) => ({ url: new URL(`/artists/${a.slug}`, base).href })),
   ];
 }
