@@ -1,5 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { headers } from "next/headers";
+import { GoogleTagManager } from "@/components/google-tag-manager";
+import { analyticsHostEnabled } from "@/lib/analytics";
 import { Header } from "@/components/header";
 import { supabaseConfig, siteUrl } from "@/lib/config";
 import "./globals.css";
@@ -22,15 +25,17 @@ export const metadata: Metadata = {
     ? { index: true, follow: true }
     : { index: false, follow: false },
 };
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
   const demo = !supabaseConfig();
+  const host = (await headers()).get("host") || "";
   return (
     <html lang="en">
       <body>
+        <GoogleTagManager enabled={analyticsHostEnabled(host)} />
         <a className="skip-link" href="#main">
           Skip to content
         </a>
