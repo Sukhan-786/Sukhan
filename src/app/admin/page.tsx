@@ -80,7 +80,7 @@ export default async function Dashboard() {
             <span aria-hidden="true">✦</span>
             <h2>A home for your first poem.</h2>
             <p>
-              Start by adding its poet, then create the kalam in any of the four
+              Start by adding its poet, then create the kalam in any of the six
               scripts.
             </p>
             <Link className="button" href="/admin/artists/new">
