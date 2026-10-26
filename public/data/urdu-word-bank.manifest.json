@@ -1,0 +1,14 @@
+{
+  "id": "urduhack-aruuz-20261026-v1",
+  "rows": 154781,
+  "weighted_rows": 130445,
+  "arabic_meanings": 0,
+  "sha256": "2a719b0abc00eaac70cb2bac41b25e4dfedbd26a88b9e5336b9c1566880f53dc",
+  "bytes": 782780,
+  "uncompressed_bytes": 8676041,
+  "word_source": "https://github.com/urduhack/urdu-words/tree/c37cc6fcf903c4b6c954c9b19f91d3f20ef14de1",
+  "wazan_source": "https://github.com/tariquesani/aruuz-nigar/tree/91fa27ac2002d9f36b93b27c6592c9622efd60d9",
+  "words_license": "MIT",
+  "wazan_license": "GPL-3.0-only",
+  "reviewed": false
+}
