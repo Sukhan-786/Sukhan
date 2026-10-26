@@ -35,7 +35,7 @@ export default async function Page({
   const record = selected.data as DictionaryEntry | null;
   return (
     <>
-      <div className="admin-heading">
+      <div className="admin-heading dictionary-admin-heading">
         <p className="eyebrow">Shared words · reviewed by editors</p>
         <h1>Sukhan Dictionary</h1>
         <p>
