@@ -228,6 +228,26 @@ async function main() {
               [body.lookup_language, body.lookup_word],
             )
           ).rows[0].v;
+        else if (endpoint === "rpc/lookup_urdu_word_bank")
+          result = (
+            await db.query("select * from public.lookup_urdu_word_bank($1)", [
+              body.lookup_word,
+            ])
+          ).rows;
+        else if (endpoint === "rpc/search_urdu_word_bank")
+          result = (
+            await db.query(
+              "select * from public.search_urdu_word_bank($1,$2)",
+              [body.prefix, body.after_word],
+            )
+          ).rows;
+        else if (endpoint === "rpc/import_urdu_word_batch")
+          result = (
+            await db.query<{ v: unknown }>(
+              "select public.import_urdu_word_batch($1,$2::jsonb) v",
+              [body.batch_offset, JSON.stringify(body.batch_rows)],
+            )
+          ).rows[0].v;
         else if (endpoint === "rpc/save_dictionary_entry")
           result = (
             await db.query<{ v: unknown }>(
@@ -258,6 +278,7 @@ async function main() {
             "kalam",
             "word_meanings",
             "dictionary_entries",
+            "word_bank_import",
           ].includes(endpoint)
         ) {
           const table = endpoint;
@@ -325,7 +346,7 @@ async function main() {
             const order =
               table === "artists"
                 ? " order by name"
-                : table === "staff_roles"
+                : ["staff_roles", "word_bank_import"].includes(table)
                   ? ""
                   : " order by updated_at desc,id desc";
             const rows = (
