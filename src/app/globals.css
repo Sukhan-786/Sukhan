@@ -3349,6 +3349,57 @@ footer .demo-banner {
 .dictionary-search {
   max-width: 700px;
 }
+.dictionary-admin-heading {
+  display: block;
+}
+.dictionary-admin-heading p:last-child {
+  max-width: 75ch;
+  margin-top: 12px;
+}
+.dictionary-studio > section {
+  min-width: 0;
+}
+.dictionary-studio .editor,
+.dictionary-studio .editor fieldset,
+.dictionary-search {
+  display: grid;
+  gap: 16px;
+  min-width: 0;
+}
+.dictionary-studio .editor label,
+.dictionary-search label {
+  display: grid;
+  gap: 8px;
+}
+.dictionary-studio .editor input:not([type="checkbox"]),
+.dictionary-studio .editor select,
+.dictionary-studio .editor textarea,
+.dictionary-search input,
+.dictionary-search select {
+  width: 100%;
+  min-width: 0;
+}
+.dictionary-studio .editor fieldset legend {
+  margin-bottom: 14px;
+}
+.dictionary-studio .editor small {
+  display: block;
+  color: #63524b;
+  font-size: 13px;
+}
+.dictionary-studio .editor .meaning-review-check {
+  display: flex;
+  align-items: start;
+  gap: 10px;
+}
+.dictionary-studio .editor .meaning-review-check input {
+  width: auto;
+  flex: 0 0 auto;
+}
+.dictionary-studio .editor .button,
+.dictionary-search .button {
+  justify-self: start;
+}
 @media (max-width: 800px) {
   .dictionary-studio {
     grid-template-columns: 1fr;
