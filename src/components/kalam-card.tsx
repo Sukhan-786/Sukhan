@@ -1,14 +1,20 @@
 import Link from "next/link";
+import { languageTags, languageDirection, type Language } from "@/lib/types";
 import type { Kalam } from "@/lib/types";
 export function KalamCard({
   kalam,
   index = 0,
+  preferredLanguage,
 }: {
   kalam: Kalam;
   index?: number;
+  preferredLanguage?: Language;
 }) {
   const english =
-    kalam.texts.find((t) => t.language === "en") || kalam.texts[0];
+    kalam.texts.find((t) => t.language === preferredLanguage) ||
+    kalam.texts.find((t) => t.language === "en") ||
+    kalam.texts.find((t) => t.language === "ur") ||
+    kalam.texts[0];
   const urdu = kalam.texts.find((t) => t.language === "ur");
   return (
     <article className="kalam-card">
@@ -23,10 +29,20 @@ export function KalamCard({
           {urdu.title}
         </p>
       ) : (
-        <p className="card-verse">“{english?.body.split("\n")[0]}”</p>
+        <p
+          className="card-verse"
+          lang={english ? languageTags[english.language] : undefined}
+          dir={english ? languageDirection(english.language) : undefined}
+        >
+          {english?.body.split("\n")[0]}
+        </p>
       )}
       <h3>
-        <Link href={`/kalam/${kalam.slug}`}>
+        <Link
+          href={`/kalam/${kalam.slug}${preferredLanguage ? `?lang=${preferredLanguage}` : ""}`}
+          lang={english ? languageTags[english.language] : undefined}
+          dir={english ? languageDirection(english.language) : undefined}
+        >
           {english?.title || kalam.slug}
         </Link>
       </h3>

@@ -4,9 +4,17 @@ import Link from "next/link";
 import type { Kalam, Language } from "@/lib/types";
 import { languageTags, languageDirection, languageLabels } from "@/lib/types";
 import { Icon } from "./icon";
-export function FeaturedKalam({ items }: { items: Kalam[] }) {
+export function FeaturedKalam({
+  items,
+  title = "TODAY’S SUKHAN SELECTION",
+  preferredLanguage = "roman",
+}: {
+  items: Kalam[];
+  title?: string;
+  preferredLanguage?: Language;
+}) {
   const [index, setIndex] = useState(0),
-    [language, setLanguage] = useState<Language>("roman"),
+    [language, setLanguage] = useState<Language>(preferredLanguage),
     [translated, setTranslated] = useState(false),
     [message, setMessage] = useState("");
   if (!items.length)
@@ -17,7 +25,7 @@ export function FeaturedKalam({ items }: { items: Kalam[] }) {
         <Link href="/catalogue">Explore the library</Link>
       </section>
     );
-  const k = items[index];
+  const k = items[Math.min(index, items.length - 1)];
   const text =
     k.texts.find((t) => t.language === language) ||
     k.texts.find((t) => t.language === "en") ||
@@ -59,7 +67,7 @@ export function FeaturedKalam({ items }: { items: Kalam[] }) {
       className="featured-poetry content-width"
       aria-label="Featured poetry"
     >
-      <h2 className="section-label">TODAY’S SUKHAN SELECTION</h2>
+      <h2 className="section-label">{title}</h2>
       <div className="featured-stage">
         <blockquote
           className="featured-verse"
@@ -135,7 +143,7 @@ export function FeaturedKalam({ items }: { items: Kalam[] }) {
           {k.texts.map((t) => (
             <button
               key={t.language}
-              aria-pressed={language === t.language}
+              aria-pressed={text.language === t.language}
               onClick={() => setLanguage(t.language)}
             >
               {languageLabels[t.language]}

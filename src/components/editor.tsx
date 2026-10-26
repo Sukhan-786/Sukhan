@@ -238,7 +238,7 @@ export function Editor({
       if (!file.name.toLowerCase().endsWith(".txt"))
         throw new Error("Choose a UTF-8 plain text (.txt) file.");
       if (file.size > maxImportBytes)
-        throw new Error("Choose a text file smaller than 400 KB.");
+        throw new Error("Choose a text file smaller than 800 KB.");
       const body = decodeTextImport(new Uint8Array(await file.arrayBuffer()));
       setBodies((current) => ({ ...current, [script]: body }));
       setDirty(true);
@@ -576,7 +576,7 @@ export function Editor({
                     }}
                   />
                   <small id={`${l}_import-help`} className="hint">
-                    UTF-8 .txt, up to 400 KB and 100,000 characters. Replaces
+                    UTF-8 .txt, up to 800 KB and 200,000 characters. Replaces
                     this language’s text only. Nothing is saved until you click
                     Save.
                   </small>
@@ -610,11 +610,11 @@ export function Editor({
                     onChange={(e) =>
                       setBodies({ ...bodies, [l]: e.target.value })
                     }
-                    maxLength={100000}
+                    maxLength={200000}
                   />
                   <FieldError name={`${l}_body`} />
                   <small className="hint">
-                    {(bodies[l] || "").length.toLocaleString()} / 100,000
+                    {(bodies[l] || "").length.toLocaleString()} / 200,000
                     characters ·{" "}
                     {
                       (bodies[l] || "")
