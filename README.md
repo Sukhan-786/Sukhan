@@ -14,7 +14,7 @@ npm run dev
 Open http://127.0.0.1:3000. With no Supabase variables, public pages use two clearly marked original sample works. This mode is read-only, the CMS is locked, and search engines receive `noindex`. An invalid or unavailable configured database produces an error; it never silently falls back to samples.
 
 ```sh
-npm run check       # lint, TypeScript, 42 automated tests, production build
+npm run check       # lint, TypeScript, 49 automated tests, production build
 npm run test:e2e    # 16 desktop/mobile browser tests; requires Chrome and a completed build
 npm start          # serve the production build
 ```
@@ -69,3 +69,7 @@ See [ADMIN_STUDIO.md](docs/ADMIN_STUDIO.md) for searchable admin libraries, curs
 ## Reviewed word meanings
 
 Saved works have a **Manage reviewed word meanings** link. Editors prepare contextual meanings; administrators review and publish them. Readers can open meanings for underlined words in an accessible popup. Poem edits hide stale meanings until re-review. See [WORD_MEANINGS.md](docs/WORD_MEANINGS.md).
+
+## Shared dictionary
+
+Every poem word can open a reviewed shared dictionary entry, with poem-specific meanings taking priority. The protected **Dictionary** admin page supports the supplied JSON format, draft entry, administrator review and publication. See [DICTIONARY.md](docs/DICTIONARY.md). Unknown words are explicit; no translations are generated automatically.
