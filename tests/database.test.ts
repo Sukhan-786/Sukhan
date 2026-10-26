@@ -2,7 +2,8 @@ import { test, before, after } from "node:test";
 import assert from "node:assert/strict";
 import { readFile, readdir } from "node:fs/promises";
 import { PGlite } from "@electric-sql/pglite";
-const db = new PGlite();
+import { pg_trgm } from "@electric-sql/pglite/contrib/pg_trgm";
+const db = new PGlite({ extensions: { pg_trgm } });
 const admin = "a0000000-0000-4000-8000-000000000001",
   editor = "a0000000-0000-4000-8000-000000000002",
   reader = "a0000000-0000-4000-8000-000000000003";
@@ -162,6 +163,11 @@ test("every exposed table has RLS enabled", async () => {
       "kalam_media",
       "word_meanings",
       "dictionary_entries",
+      "homepage_public",
+      "homepage_draft",
+      "couplet_translations",
+      "poetry_imports",
+      "poetry_import_records",
       "urdu_word_bank",
       "word_bank_import",
     ].sort(),

@@ -22,7 +22,7 @@ test("invalid, empty, binary and oversized text imports fail without guessing an
     encode(" \n"),
     encode("a\0b"),
     new Uint8Array(maxImportBytes + 1),
-    encode("a".repeat(100001)),
+    encode("a".repeat(200001)),
   ])
     assert.throws(() => decodeTextImport(input));
 });

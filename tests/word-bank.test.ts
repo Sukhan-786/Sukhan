@@ -4,6 +4,7 @@ import { readFile, readdir } from "node:fs/promises";
 import { createHash } from "node:crypto";
 import { gunzipSync } from "node:zlib";
 import { PGlite } from "@electric-sql/pglite";
+import { pg_trgm } from "@electric-sql/pglite/contrib/pg_trgm";
 import {
   wordBankBatchSchema,
   wordBankHash,
@@ -12,7 +13,7 @@ import {
   displayWazanCandidate,
 } from "../src/lib/word-bank";
 import { parseDictionaryImport } from "../src/lib/dictionary-validation";
-const db = new PGlite(),
+const db = new PGlite({ extensions: { pg_trgm } }),
   admin = "c0000000-0000-4000-8000-000000000001",
   editor = "c0000000-0000-4000-8000-000000000002";
 async function as(role: string, uid = "") {
