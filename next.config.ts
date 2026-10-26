@@ -1,6 +1,7 @@
 import type { NextConfig } from "next";
 const config: NextConfig = {
   poweredByHeader: false,
+  experimental: { serverActions: { bodySizeLimit: "4mb" } },
   distDir: process.env.SUKHAN_TEST_BUILD === "1" ? ".next/test-build" : ".next",
   async headers() {
     return [
