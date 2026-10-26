@@ -1,4 +1,4 @@
-import { lookupDictionary } from "@/lib/dictionary-data";
+import { lookupDictionary, lookupWordBank } from "@/lib/dictionary-data";
 import { languages, type Language } from "@/lib/types";
 export const dynamic = "force-dynamic";
 export async function GET(request: Request) {
@@ -16,10 +16,11 @@ export async function GET(request: Request) {
       { status: 400, headers },
     );
   try {
-    return Response.json(
-      { entries: await lookupDictionary(language as Language, word) },
-      { headers },
-    );
+    const entries = await lookupDictionary(language as Language, word);
+    const wordBank = entries.length
+      ? []
+      : await lookupWordBank(language as Language, word);
+    return Response.json({ entries, wordBank }, { headers });
   } catch {
     return Response.json(
       { error: "Dictionary lookup is unavailable." },
