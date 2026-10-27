@@ -3408,7 +3408,151 @@ footer .demo-banner {
     order: 2;
   }
 }
+/* ==========================================================================
+   Poets & Artists Directory & Search
+   ========================================================================== */
 
+.artist-search {
+  position: relative;
+  display: flex;
+  align-items: center;
+  max-width: 600px;
+  margin: 0 0 20px 0;
+}
+
+.artist-search input[type="search"] {
+  width: 100%;
+  padding: 14px 44px 14px 18px;
+  font-size: 16px;
+  color: #282b4a;
+  background: #ffffff;
+  border: 1px solid #e2e4e9;
+  border-radius: 12px;
+  outline: none;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.artist-search input[type="search"]:focus {
+  border-color: #282b4a;
+  box-shadow: 0 0 0 3px rgba(40, 43, 74, 0.12);
+}
+
+.search-clear-btn {
+  position: absolute;
+  right: 14px;
+  background: none;
+  border: none;
+  font-size: 16px;
+  color: #717686;
+  cursor: pointer;
+  padding: 6px;
+  line-height: 1;
+  border-radius: 6px;
+}
+
+.search-clear-btn:hover {
+  color: #282b4a;
+}
+
+.results-note {
+  font-size: 14px;
+  color: #717686;
+  margin-bottom: 20px;
+}
+
+.artist-directory {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-width: 800px;
+}
+
+.artist-directory-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px 20px;
+  background: #ffffff;
+  border: 1px solid #e2e4e9;
+  border-radius: 14px;
+  transition: transform 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.artist-directory-row:hover {
+  border-color: #282b4a;
+  box-shadow: 0 4px 16px rgba(40, 43, 74, 0.06);
+}
+
+.artist-initial {
+  width: 48px;
+  height: 48px;
+  min-width: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f0f1f5;
+  color: #282b4a;
+  border-radius: 50%;
+  font-family: "Mehr Nastaliq Web", "Noto Nastaliq Urdu", serif;
+  font-size: 22px;
+  font-weight: 600;
+}
+
+.artist-directory-row > div {
+  flex: 1;
+  min-width: 0;
+}
+
+.artist-directory-row h2 {
+  font-size: 18px;
+  font-weight: 600;
+  margin: 0;
+  color: #282b4a;
+}
+
+.artist-directory-row h2 a {
+  text-decoration: none;
+  color: inherit;
+}
+
+.artist-directory-row h2 a:hover {
+  text-decoration: underline;
+}
+
+.artist-directory-row p[lang="ur"] {
+  font-family: "Mehr Nastaliq Web", "Noto Nastaliq Urdu", serif;
+  font-size: 19px;
+  margin: 4px 0 2px;
+  color: #282b4a;
+  line-height: 1.5;
+}
+
+.artist-directory-row small {
+  display: block;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #717686;
+}
+
+.directory-open {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  color: #282b4a;
+  font-size: 18px;
+  text-decoration: none;
+  background: #f5f5f5;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.artist-directory-row:hover .directory-open {
+  background: #282b4a;
+  color: #ffffff;
+}
 .word-bank-import {
   border: 1px solid var(--line, #ddd);
   padding: 1.5rem;
