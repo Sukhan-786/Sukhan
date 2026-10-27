@@ -14,7 +14,7 @@ npm run dev
 Open http://127.0.0.1:3000. With no Supabase variables, public pages use two clearly marked original sample works. This mode is read-only, the CMS is locked, and search engines receive `noindex`. An invalid or unavailable configured database produces an error; it never silently falls back to samples.
 
 ```sh
-npm run check       # lint, TypeScript, 54 automated tests, production build
+npm run check       # lint, TypeScript, automated tests, production build
 npm run test:e2e    # 16 desktop/mobile browser tests; requires Chrome and a completed build
 npm start          # serve the production build
 ```
@@ -54,13 +54,13 @@ Hosted sign-in, administrator access and migrations have been verified for the d
 
 ## Pending
 
-Add permission-cleared literature and recordings and verify their publication in the hosted archive. Media upload, transcoding, streaming pipelines, YouTube/Vimeo embeds, reader accounts, bookmarks, collections, events, payment, analytics/marketing, password recovery, staff-invitation email flows, audit/version history and PWA/offline reading are future milestones.
+Add permission-cleared literature and recordings and verify their publication in the hosted archive. Media upload, transcoding, streaming pipelines, YouTube/Vimeo embeds, reader accounts, bookmarks, collections, events, payment, GA4/marketing configuration, password recovery, staff-invitation email flows, audit/version history and PWA/offline reading are future milestones.
 
-This foundation uses plain text rather than a rich HTML editor. Profile names have English/default and Urdu fields; the six-script authoring model applies to kalam. Search currently uses normalized substring matching suitable for a small archive; ranked indexed search is a later scaling step. Directory/media/editor lists have explicit initial limits documented in the architecture guide.
+This foundation uses plain text rather than a rich HTML editor. Profile names have English/default and Urdu fields; the six-script authoring model applies to kalam. Search uses indexed normalized literal substring matching; ranked semantic search remains a later step. Directory/media/editor lists have explicit initial limits documented in the architecture guide.
 
 ## Visual revision
 
-Sukhan now follows the measured Rekhta typography and layout, with locally embedded LatoX, Merriweather and Mehr Nastaliq, a compact header, full-width banner, pink controls and centred poetry. See [DESIGN_COMPARISON.md](docs/DESIGN_COMPARISON.md) for measurements, font sources and remaining visual differences.
+Sukhan now follows the supplied navy/lilac/white mobile design, with locally embedded LatoX, Merriweather and Mehr Nastaliq, compact navigation, homepage sections and a concise dictionary sheet. See [DESIGN_COMPARISON.md](docs/DESIGN_COMPARISON.md) for measurements, font sources and remaining visual differences.
 
 ## Editorial studio update
 
@@ -72,8 +72,12 @@ Saved works have a **Manage reviewed word meanings** link. Editors prepare conte
 
 ## Shared dictionary
 
-Every poem word can open a reviewed shared dictionary entry, with poem-specific meanings taking priority. The protected **Dictionary** admin page supports the supplied JSON format, draft entry, administrator review and publication. See [DICTIONARY.md](docs/DICTIONARY.md). Unknown words are explicit; no translations are generated automatically.
+Words in Urdu, Roman Urdu, Hindi and English can open a reviewed shared dictionary entry, with poem-specific meanings taking priority. The protected **Dictionary** admin page supports the supplied JSON format, draft entry, administrator review and publication. See [DICTIONARY.md](docs/DICTIONARY.md). Unknown words are explicit; no translations are generated automatically.
 
 ## Large Urdu word bank and wazan
 
 The sourced corpus contains 154,781 word forms and 130,445 candidate weights. Admin supports resumable import, Urdu prefix search, Arabic/Urdu definitions, numeric wazan and pronunciation notes. Source candidates remain distinct from reviewed definitions; mass Arabic definitions and complete verse/bahr scansion are pending. See [URDU_WORD_BANK.md](docs/URDU_WORD_BANK.md) for migration, import, coverage, licenses and verification.
+
+## Supplied poetry, homepage editor and passage translations
+
+See [POETRY_AND_HOMEPAGE.md](docs/POETRY_AND_HOMEPAGE.md) for the section editor, private preview and publishing flow, resumable 73,183-work source import, compact navy interface, Persian/Arabic passage translations, indexed search and the complete sitemap index. Missing translations and Arabic definitions are never generated automatically. Hosted import progress must be verified separately from prepared source counts.

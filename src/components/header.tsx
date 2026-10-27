@@ -70,12 +70,22 @@ export function Header() {
           />
         </form>
         <div className="header-tools">
-          <span
-            className="header-locale"
-            aria-label="Interface language: English"
-          >
-            ENG
-          </span>
+          <details className="reading-menu">
+            <summary
+              className="header-locale"
+              aria-label="Browse by reading script"
+            >
+              Read ▾
+            </summary>
+            <nav className="dropdown" aria-label="Reading scripts">
+              <MenuLink href="/catalogue?lang=ur">اردو</MenuLink>
+              <MenuLink href="/catalogue?lang=hi">हिन्दी</MenuLink>
+              <MenuLink href="/catalogue?lang=roman">Roman Urdu</MenuLink>
+              <MenuLink href="/catalogue?lang=fa">فارسی</MenuLink>
+              <MenuLink href="/catalogue?lang=ar">العربية</MenuLink>
+              <MenuLink href="/catalogue?lang=en">English</MenuLink>
+            </nav>
+          </details>
           <Link className="header-login" href="/login">
             LOG IN
           </Link>

@@ -1,5 +1,7 @@
 import type { CSSProperties } from "react";
 type Name =
+  | "home"
+  | "video"
   | "search"
   | "menu"
   | "grid"
@@ -14,6 +16,13 @@ type Name =
   | "book"
   | "headphones";
 const paths: Record<Name, React.ReactNode> = {
+  home: <path d="m3 11 9-8 9 8v10h-6v-7H9v7H3Z" />,
+  video: (
+    <>
+      <rect x="3" y="5" width="18" height="15" rx="3" />
+      <path d="m8 2 4 3 4-3M10 10l5 3-5 3Z" />
+    </>
+  ),
   search: (
     <>
       <circle cx="10.5" cy="10.5" r="6.5" />

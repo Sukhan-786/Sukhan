@@ -14,16 +14,27 @@ import {
   languageTags,
   languageDirection,
 } from "@/lib/types";
+import { defaultReadingLanguage } from "@/lib/kalam-language";
+import { PassageReader } from "./passage-reader";
+import type { CoupletTranslation } from "@/lib/couplet-translations";
 import { DictionaryLookup } from "./dictionary-lookup";
 export function Reader({
   texts,
   meanings = [],
+  translations = [],
+  prose = false,
+  initialLanguage,
 }: {
   texts: KalamText[];
   meanings?: WordMeaning[];
+  translations?: CoupletTranslation[];
+  prose?: boolean;
+  initialLanguage?: Language;
 }) {
   const [language, setLanguage] = useState<Language>(
-    texts.some((t) => t.language === "ur") ? "ur" : texts[0]?.language || "en",
+    initialLanguage && texts.some((t) => t.language === initialLanguage)
+      ? initialLanguage
+      : defaultReadingLanguage(texts),
   );
   const ready = useClientReady();
   const [size, setSize] = useState(28);
@@ -42,6 +53,7 @@ export function Reader({
       dialog.current.close();
   }, [selected, dictionaryWord]);
   const text = texts.find((t) => t.language === language);
+  const passageMode = language === "fa" || language === "ar";
   const available = meanings.filter((m) => m.language === language);
   return (
     <section className="reader" aria-label="Multilingual reading room">
@@ -55,6 +67,11 @@ export function Reader({
               disabled={!ready || !texts.some((t) => t.language === lang)}
               onClick={() => {
                 setLanguage(lang);
+                const url = new URL(window.location.href);
+                if (lang === defaultReadingLanguage(texts))
+                  url.searchParams.delete("lang");
+                else url.searchParams.set("lang", lang);
+                window.history.replaceState(null, "", url);
                 setSelected(null);
                 setDictionaryWord(null);
               }}
@@ -76,78 +93,92 @@ export function Reader({
           />
         </label>
       </div>
-      <p className="meaning-hint">
-        Select a word for the dictionary. Underlined passages have a meaning
-        reviewed for this poem.
-      </p>
+      {!passageMode && (
+        <p className="meaning-hint">
+          Select a word for the dictionary. Underlined passages have a meaning
+          reviewed for this poem.
+        </p>
+      )}
       <div
         className="poem"
         lang={languageTags[language]}
         dir={languageDirection(language)}
       >
-        <h2>{text?.title}</h2>
-        <p style={{ fontSize: size }}>
-          {text
-            ? meaningSegments(text.body, available).map((part, index) =>
-                part.meaning ? (
-                  <button
-                    key={part.meaning.id}
-                    type="button"
-                    className="meaning-word"
-                    aria-haspopup="dialog"
-                    disabled={!ready}
-                    aria-label={`Meaning of ${part.text}`}
-                    onClick={(event) => {
-                      opener.current = event.currentTarget;
-                      setDictionaryWord(null);
-                      setSelected(part.meaning!);
-                    }}
-                  >
-                    {part.text}
-                  </button>
-                ) : (
-                  <span key={index}>
-                    {(() => {
-                      const points = Array.from(part.text);
-                      let end = 0;
-                      const segments = wordTokens(part.text).map((token) => {
-                        const before = points.slice(end, token.start).join("");
-                        end = token.end;
+        <h2 className={passageMode ? "sr-only" : undefined}>{text?.title}</h2>
+        {passageMode && text ? (
+          <PassageReader
+            key={language}
+            text={text}
+            size={size}
+            translations={translations}
+            prose={prose}
+          />
+        ) : (
+          <p style={{ fontSize: size }}>
+            {text
+              ? meaningSegments(text.body, available).map((part, index) =>
+                  part.meaning ? (
+                    <button
+                      key={part.meaning.id}
+                      type="button"
+                      className="meaning-word"
+                      aria-haspopup="dialog"
+                      disabled={!ready}
+                      aria-label={`Meaning of ${part.text}`}
+                      onClick={(event) => {
+                        opener.current = event.currentTarget;
+                        setDictionaryWord(null);
+                        setSelected(part.meaning!);
+                      }}
+                    >
+                      {part.text}
+                    </button>
+                  ) : (
+                    <span key={index}>
+                      {(() => {
+                        const points = Array.from(part.text);
+                        let end = 0;
+                        const segments = wordTokens(part.text).map((token) => {
+                          const before = points
+                            .slice(end, token.start)
+                            .join("");
+                          end = token.end;
+                          return (
+                            <span key={token.start}>
+                              {before}
+                              <button
+                                type="button"
+                                className="dictionary-word"
+                                disabled={!ready}
+                                aria-haspopup="dialog"
+                                aria-label={`Dictionary meaning of ${token.surface}`}
+                                onClick={(event) => {
+                                  opener.current = event.currentTarget;
+                                  setSelected(null);
+                                  setDictionaryWord({
+                                    word: token.surface,
+                                    language,
+                                  });
+                                }}
+                              >
+                                {token.surface}
+                              </button>
+                            </span>
+                          );
+                        });
                         return (
-                          <span key={token.start}>
-                            {before}
-                            <button
-                              type="button"
-                              className="dictionary-word"
-                              disabled={!ready}
-                              aria-haspopup="dialog"
-                              aria-label={`Dictionary meaning of ${token.surface}`}
-                              onClick={(event) => {
-                                opener.current = event.currentTarget;
-                                setSelected(null);
-                                setDictionaryWord({
-                                  word: token.surface,
-                                  language,
-                                });
-                              }}
-                            >
-                              {token.surface}
-                            </button>
-                          </span>
+                          <>
+                            {segments}
+                            {points.slice(end).join("")}
+                          </>
                         );
-                      });
-                      return (
-                        <>
-                          {segments}
-                          {points.slice(end).join("")}
-                        </>
-                      );
-                    })()}
-                  </span>
-                ),
-              )
-            : "This script is not available yet."}
-        </p>
+                      })()}
+                    </span>
+                  ),
+                )
+              : "This script is not available yet."}
+          </p>
+        )}
       </div>
       <dialog
         ref={dialog}

@@ -4,6 +4,8 @@ import { WordBankList } from "@/components/word-bank-list";
 import type { WordBankRow } from "@/lib/word-bank";
 export const dynamic = "force-dynamic";
 export const metadata = {
+  robots: { index: false, follow: true },
+  alternates: { canonical: "/dictionary/word-bank" },
   title: "Urdu word bank and wazan | Sukhan",
   description:
     "Browse sourced Urdu word forms and clearly labelled wazan candidates.",

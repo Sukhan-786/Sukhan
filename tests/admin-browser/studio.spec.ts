@@ -184,7 +184,15 @@ test("multilingual poetry, preserved attachments, validation and public reading"
     await expect(page.locator(".poem")).toHaveAttribute("lang", tag);
     await expect(page.locator(".poem")).toHaveAttribute("dir", direction);
     await expect(page.locator(".poem h2")).toHaveText(title);
-    await expect(page.locator(".poem p")).toHaveText(body);
+    const original = page.locator(
+      tag === "ar" || tag === "fa" ? ".poem .passage-original" : ".poem p",
+    );
+    await expect(original).toHaveText(body);
+    if (tag === "ar" || tag === "fa") {
+      await expect(page.locator(".poem .translation-empty")).toContainText(
+        "Translations have not been published",
+      );
+    }
   }
 });
 test("unsaved changes are protected and editors cannot edit published records", async ({
@@ -359,6 +367,13 @@ test("reviewed word meanings publish by occurrence, support Hindi/Arabic and req
     ).toBeVisible();
     await page.goto(`/kalam/${slug}`);
     await page.getByRole("button", { name: label, exact: true }).click();
+    if (script === "ar") {
+      await expect(page.locator(".poem")).toContainText(token);
+      await expect(
+        page.locator(".poem .meaning-word,.poem .dictionary-word"),
+      ).toHaveCount(0);
+      continue;
+    }
     await page
       .getByRole("button", { name: `Meaning of ${token}`, exact: true })
       .click();

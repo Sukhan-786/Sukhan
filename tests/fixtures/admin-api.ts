@@ -2,10 +2,12 @@
 import { createServer } from "node:http";
 import { readFile, readdir } from "node:fs/promises";
 import { PGlite } from "@electric-sql/pglite";
+import { pg_trgm } from "@electric-sql/pglite/contrib/pg_trgm";
 import { meaningColumns } from "../../src/lib/word-meanings";
+import { translationColumns } from "../../src/lib/couplet-translations";
 import { dictionaryColumns } from "../../src/lib/dictionary";
 async function main() {
-  const db = new PGlite();
+  const db = new PGlite({ extensions: { pg_trgm } });
   const admin = "a0000000-0000-4000-8000-000000000001",
     editor = "a0000000-0000-4000-8000-000000000002",
     reader = "a0000000-0000-4000-8000-000000000003";
@@ -83,8 +85,10 @@ async function main() {
           res.end("{}");
           return;
         }
-        let raw = "";
-        for await (const c of req) raw += c;
+        // A network chunk may split a multibyte Urdu/Persian character. Decode only after concatenation.
+        const chunks: Buffer[] = [];
+        for await (const c of req) chunks.push(Buffer.from(c));
+        const raw = Buffer.concat(chunks).toString("utf8");
         const body = raw ? JSON.parse(raw) : {};
         const bearer = String(req.headers.authorization || "").replace(
           "Bearer ",
@@ -177,16 +181,55 @@ async function main() {
               ],
             )
           ).rows[0].v;
-        else if (endpoint === "rpc/search_kalam") {
+        else if (endpoint === "rpc/sitemap_counts")
+          result = (
+            await db.query<{ v: unknown }>("select public.sitemap_counts() v")
+          ).rows[0].v;
+        else if (endpoint === "rpc/sitemap_poetry")
+          result = (
+            await db.query("select * from public.sitemap_poetry($1)", [
+              body.page_number,
+            ])
+          ).rows;
+        else if (endpoint === "rpc/save_homepage_draft")
+          result = (
+            await db.query<{ v: unknown }>(
+              "select public.save_homepage_draft($1::jsonb,$2::timestamptz) v",
+              [JSON.stringify(body.payload), body.expected_updated_at],
+            )
+          ).rows[0].v;
+        else if (endpoint === "rpc/publish_homepage")
+          result = (
+            await db.query<{ v: unknown }>(
+              "select public.publish_homepage($1::timestamptz,$2::timestamptz) v",
+              [body.expected_draft_at, body.expected_public_at],
+            )
+          ).rows[0].v;
+        else if (
+          [
+            "rpc/search_kalam",
+            "rpc/search_library",
+            "rpc/homepage_kalam",
+          ].includes(endpoint)
+        ) {
           const rows = (
             await db.query<Record<string, unknown>>(
-              "select * from public.search_kalam($1,$2,$3,$4)",
-              [
-                body.search_query || "",
-                body.filter_form || null,
-                body.filter_poet || null,
-                body.filter_kind || null,
-              ],
+              endpoint === "rpc/homepage_kalam"
+                ? "select * from public.homepage_kalam($1,$2)"
+                : endpoint === "rpc/search_library"
+                  ? "select * from public.search_library($1,$2,$3,$4,$5)"
+                  : "select * from public.search_kalam($1,$2,$3,$4)",
+              endpoint === "rpc/homepage_kalam"
+                ? [body.feed_language || null, body.requested_ids || []]
+                : [
+                    body.search_query || "",
+                    body.filter_form || null,
+                    body.filter_poet || null,
+                    body.filter_kind || null,
+                    ...(endpoint === "rpc/search_library"
+                      ? [body.filter_language || null]
+                      : []),
+                  ],
             )
           ).rows;
           for (const row of rows) {
@@ -259,6 +302,28 @@ async function main() {
               ],
             )
           ).rows[0].v;
+        else if (endpoint === "rpc/import_poetry_batch")
+          result = (
+            await db.query<{ v: unknown }>(
+              "select public.import_poetry_batch($1,$2,$3::jsonb) v",
+              [
+                body.dataset_id,
+                body.batch_offset,
+                JSON.stringify(body.batch_rows),
+              ],
+            )
+          ).rows[0].v;
+        else if (endpoint === "rpc/save_couplet_translation")
+          result = (
+            await db.query<{ v: unknown }>(
+              "select public.save_couplet_translation($1,$2::jsonb,$3::timestamptz) v",
+              [
+                body.record_id,
+                JSON.stringify(body.payload),
+                body.expected_updated_at,
+              ],
+            )
+          ).rows[0].v;
         else if (endpoint === "rpc/save_word_meaning")
           result = (
             await db.query<{ v: unknown }>(
@@ -279,6 +344,11 @@ async function main() {
             "word_meanings",
             "dictionary_entries",
             "word_bank_import",
+            "homepage_public",
+            "homepage_draft",
+            "couplet_translations",
+            "poetry_imports",
+            "poetry_import_records",
           ].includes(endpoint)
         ) {
           const table = endpoint;
@@ -286,6 +356,7 @@ async function main() {
           const args: unknown[] = [];
           for (const key of [
             "id",
+            "source_id",
             "slug",
             "status",
             "user_id",
@@ -344,14 +415,16 @@ async function main() {
             ).rows;
           else {
             const order =
-              table === "artists"
-                ? " order by name"
-                : ["staff_roles", "word_bank_import"].includes(table)
-                  ? ""
-                  : " order by updated_at desc,id desc";
+              table === "poetry_imports"
+                ? " order by source_id"
+                : table === "artists"
+                  ? " order by name"
+                  : ["staff_roles", "word_bank_import"].includes(table)
+                    ? ""
+                    : " order by updated_at desc,id desc";
             const rows = (
               await db.query<Record<string, unknown>>(
-                `select ${table === "word_meanings" ? meaningColumns : table === "dictionary_entries" ? dictionaryColumns : "*"} from public.${table}${where}${order} limit 500`,
+                `select ${table === "couplet_translations" ? translationColumns : table === "word_meanings" ? meaningColumns : table === "dictionary_entries" ? dictionaryColumns : "*"} from public.${table}${where}${order} limit 500`,
                 args,
               )
             ).rows;
@@ -391,6 +464,7 @@ async function main() {
       })
       .catch((error: unknown) => {
         const err = error as { code?: string; message?: string };
+        console.error("Isolated test API error:", err.code, err.message);
         res.statusCode = 400;
         res.end(
           JSON.stringify({

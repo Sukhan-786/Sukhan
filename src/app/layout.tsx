@@ -3,9 +3,11 @@ import Link from "next/link";
 import { headers } from "next/headers";
 import { GoogleTagManager } from "@/components/google-tag-manager";
 import { analyticsHostEnabled } from "@/lib/analytics";
+import { MobileNavigation } from "@/components/mobile-navigation";
 import { Header } from "@/components/header";
 import { supabaseConfig, siteUrl } from "@/lib/config";
 import "./globals.css";
+import "./sukhan-theme.css";
 export const metadata: Metadata = {
   metadataBase: siteUrl(),
   title: {
@@ -13,7 +15,7 @@ export const metadata: Metadata = {
     template: "%s | Sukhan",
   },
   description:
-    "Discover literature in Urdu, Roman Urdu, Persian and English. Read kalam, meet poets and artists, and explore their voices.",
+    "Discover literature in Urdu, Roman Urdu, Persian, Hindi, Arabic and English. Read kalam, meet poets and artists, and explore their voices.",
   openGraph: {
     type: "website",
     siteName: "Sukhan",
@@ -53,6 +55,7 @@ export default async function RootLayout({
             <Link href="/catalogue">The library</Link>
             <Link href="/artists">Our voices</Link>
             <Link href="/admin">Editorial studio</Link>
+            <Link href="/poetry-sources">Poetry sources</Link>
           </div>
           <small>
             © {new Date().getFullYear()} Sukhan · Read. Listen. Belong.
@@ -82,6 +85,7 @@ export default async function RootLayout({
             </div>
           )}
         </footer>
+        <MobileNavigation />
       </body>
     </html>
   );

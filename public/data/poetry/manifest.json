@@ -1,0 +1,350 @@
+{
+  "version": 1,
+  "datasets": [
+    {
+      "id": "urdu-ghazals-v1",
+      "label": "Urdu ghazals · Urdu, Roman Urdu and Hindi",
+      "source_file": "urdu_ghazals_30_poets_multilingual.json",
+      "source_sha256": "9aeee700aabc526fbc676f7a143de795908768cee6f77dea69596f3e16abeca2",
+      "rows": 1314,
+      "input_rows": 1314,
+      "duplicates_removed": 0,
+      "shards": [
+        {
+          "file": "urdu-ghazals-v1-001.jsonl.gz",
+          "rows": 1314,
+          "offset": 0,
+          "sha256": "af9b69cf2e63c00ad1ace2c48a900210c470b774fe8a6202f88f9aadcf4623aa",
+          "bytes": 1556274,
+          "raw_bytes": 5477874
+        }
+      ]
+    },
+    {
+      "id": "urdu-couplets-v1",
+      "label": "Urdu couplets",
+      "source_file": "urdu_couplets_15_poets_17609_utf8.json",
+      "source_sha256": "e554f0072446b082f657875399f789930729b527f41a66461702a1db0aa0d7ba",
+      "rows": 17439,
+      "input_rows": 17609,
+      "duplicates_removed": 170,
+      "shards": [
+        {
+          "file": "urdu-couplets-v1-001.jsonl.gz",
+          "rows": 2000,
+          "offset": 0,
+          "sha256": "560156c5852b6425f13549cda70526b156d0a260874ade46bb1b3243327d13e9",
+          "bytes": 254145,
+          "raw_bytes": 1450356
+        },
+        {
+          "file": "urdu-couplets-v1-002.jsonl.gz",
+          "rows": 2000,
+          "offset": 2000,
+          "sha256": "dee41853d56befe11894271d75cf7785713fec365ae10bd30c78758190b4bea9",
+          "bytes": 248622,
+          "raw_bytes": 1447121
+        },
+        {
+          "file": "urdu-couplets-v1-003.jsonl.gz",
+          "rows": 2000,
+          "offset": 4000,
+          "sha256": "13bb62da37630a3bd3595bad3d54b669b2700719d7f83475fece769f0c6eb5b6",
+          "bytes": 247578,
+          "raw_bytes": 1404871
+        },
+        {
+          "file": "urdu-couplets-v1-004.jsonl.gz",
+          "rows": 2000,
+          "offset": 6000,
+          "sha256": "34ffdbb4b5977adf7eab83f6758ea55978399d690f1711ee21cb5c20d17ca80b",
+          "bytes": 250163,
+          "raw_bytes": 1427304
+        },
+        {
+          "file": "urdu-couplets-v1-005.jsonl.gz",
+          "rows": 2000,
+          "offset": 8000,
+          "sha256": "35119fc721d9b9f2793ecf745a8dc777dafda06efe2005e265a86c87febbb3d8",
+          "bytes": 254940,
+          "raw_bytes": 1448289
+        },
+        {
+          "file": "urdu-couplets-v1-006.jsonl.gz",
+          "rows": 2000,
+          "offset": 10000,
+          "sha256": "5489170af05c322ab8863e2baab3ed1e1c2ac3c8a38c890ee8d18101877855b5",
+          "bytes": 261367,
+          "raw_bytes": 1525061
+        },
+        {
+          "file": "urdu-couplets-v1-007.jsonl.gz",
+          "rows": 2000,
+          "offset": 12000,
+          "sha256": "bed8b61d712e353d871bd8d6620dee40102900450ff062b335e39dc98780aa3f",
+          "bytes": 253788,
+          "raw_bytes": 1464076
+        },
+        {
+          "file": "urdu-couplets-v1-008.jsonl.gz",
+          "rows": 2000,
+          "offset": 14000,
+          "sha256": "7228357f4ac59e7e4a1722246208d87e1c5a4a3b77ffafce547e8267a6f42036",
+          "bytes": 246764,
+          "raw_bytes": 1484745
+        },
+        {
+          "file": "urdu-couplets-v1-009.jsonl.gz",
+          "rows": 1439,
+          "offset": 16000,
+          "sha256": "0bd68071637d3234ea4fec0fc41bf9bba693c03b5c1d5b82e1c8172d9dfdb23b",
+          "bytes": 178806,
+          "raw_bytes": 1044028
+        }
+      ]
+    },
+    {
+      "id": "persian-texts-v1",
+      "label": "Persian poems and literary texts",
+      "source_file": "farsi_chronological_poems.tsv",
+      "source_sha256": "3de4a16d89ec2c14a7e88f27e44fa477e811ab28d85c1bb4ba145624630dd81d",
+      "rows": 54430,
+      "input_rows": 54524,
+      "duplicates_removed": 94,
+      "shards": [
+        {
+          "file": "persian-texts-v1-001.jsonl.gz",
+          "rows": 2000,
+          "offset": 0,
+          "sha256": "b0cb65cdac46b9454a1a93548f213de8c157a24c78aa45780ad7521f522c9690",
+          "bytes": 2056665,
+          "raw_bytes": 8217019
+        },
+        {
+          "file": "persian-texts-v1-002.jsonl.gz",
+          "rows": 2000,
+          "offset": 2000,
+          "sha256": "9d5342d76cfe8bd82d81fc332f9fe00bf3616a0ca1e9195d7e6517e8e5b839b6",
+          "bytes": 1857179,
+          "raw_bytes": 7378783
+        },
+        {
+          "file": "persian-texts-v1-003.jsonl.gz",
+          "rows": 2000,
+          "offset": 4000,
+          "sha256": "e660049ae160397dca8d90bcfe8d6fd5c988df90934aea79ecd418ac63e1c699",
+          "bytes": 1135778,
+          "raw_bytes": 4588278
+        },
+        {
+          "file": "persian-texts-v1-004.jsonl.gz",
+          "rows": 2000,
+          "offset": 6000,
+          "sha256": "26fb1f75c91d195fbb9f546106e7ce7359a80004bc2e04214a7d12956b982f31",
+          "bytes": 1108678,
+          "raw_bytes": 4490301
+        },
+        {
+          "file": "persian-texts-v1-005.jsonl.gz",
+          "rows": 2000,
+          "offset": 8000,
+          "sha256": "fa738ab13decc4d40dfc9f36dc9686b02c2fe93b73d21207ebd506c347bdfe0f",
+          "bytes": 994159,
+          "raw_bytes": 4117147
+        },
+        {
+          "file": "persian-texts-v1-006.jsonl.gz",
+          "rows": 2000,
+          "offset": 10000,
+          "sha256": "f603e39e15c614191672a92bf6ef2d21c55eca8be577c7652ea1489de1090bef",
+          "bytes": 310932,
+          "raw_bytes": 1884194
+        },
+        {
+          "file": "persian-texts-v1-007.jsonl.gz",
+          "rows": 2000,
+          "offset": 12000,
+          "sha256": "871acd55ad6c4024c4043f4af509b94566f5d55286994f529dcb0c897af3b338",
+          "bytes": 2202999,
+          "raw_bytes": 8842382
+        },
+        {
+          "file": "persian-texts-v1-008.jsonl.gz",
+          "rows": 2000,
+          "offset": 14000,
+          "sha256": "47e6b9d23475ca93100861757b1578f640cd997594d7e076c1ab3a53ad6cfd2a",
+          "bytes": 1298419,
+          "raw_bytes": 5217152
+        },
+        {
+          "file": "persian-texts-v1-009.jsonl.gz",
+          "rows": 2000,
+          "offset": 16000,
+          "sha256": "46a176647b3922a4e10694aa48a2f4629a176f685650e5dd988c61065a576f95",
+          "bytes": 1101730,
+          "raw_bytes": 4335166
+        },
+        {
+          "file": "persian-texts-v1-010.jsonl.gz",
+          "rows": 2000,
+          "offset": 18000,
+          "sha256": "cbafaf5e76969c9f543f2ea6af6be75444677265492db9c6a8043cab72bc855a",
+          "bytes": 1291871,
+          "raw_bytes": 4990930
+        },
+        {
+          "file": "persian-texts-v1-011.jsonl.gz",
+          "rows": 2000,
+          "offset": 20000,
+          "sha256": "1f39ba09669cbb350dbfe91012780a9719cc2e95342edeabd50d2645b1c7b41d",
+          "bytes": 803634,
+          "raw_bytes": 3486055
+        },
+        {
+          "file": "persian-texts-v1-012.jsonl.gz",
+          "rows": 2000,
+          "offset": 22000,
+          "sha256": "f3e1988776bb73ce29d8a8d1731469e14973aa5316bb3b68c9fc01a7528944fd",
+          "bytes": 312616,
+          "raw_bytes": 1797856
+        },
+        {
+          "file": "persian-texts-v1-013.jsonl.gz",
+          "rows": 2000,
+          "offset": 24000,
+          "sha256": "7ddb7e56e4b3db4986c87a88ca2c11f91cbb4467fff014d611ffbe3ce1b9c7f1",
+          "bytes": 859222,
+          "raw_bytes": 3549373
+        },
+        {
+          "file": "persian-texts-v1-014.jsonl.gz",
+          "rows": 2000,
+          "offset": 26000,
+          "sha256": "61569ddcb9735b8085fdc9492c675d17e7efc2cab9a915bdebe46c26c14be115",
+          "bytes": 806102,
+          "raw_bytes": 3482339
+        },
+        {
+          "file": "persian-texts-v1-015.jsonl.gz",
+          "rows": 2000,
+          "offset": 28000,
+          "sha256": "30f8041498f87d4e60a4d2af69deb2a52fe03d15e2ceec1a9476adb6a06bd7a9",
+          "bytes": 817288,
+          "raw_bytes": 3726615
+        },
+        {
+          "file": "persian-texts-v1-016.jsonl.gz",
+          "rows": 2000,
+          "offset": 30000,
+          "sha256": "8551871bb3075f36262f87f927fed6918ec1b5f79db916456e33f686a442a5b5",
+          "bytes": 672149,
+          "raw_bytes": 3100863
+        },
+        {
+          "file": "persian-texts-v1-017.jsonl.gz",
+          "rows": 2000,
+          "offset": 32000,
+          "sha256": "6189f5e0e3914b8b38268eddaf6275248e72130e68c1d27b4426c1d97cde6f97",
+          "bytes": 1006980,
+          "raw_bytes": 4120946
+        },
+        {
+          "file": "persian-texts-v1-018.jsonl.gz",
+          "rows": 2000,
+          "offset": 34000,
+          "sha256": "4c8a2055e7c7e89fa0c0f694e0c12868c1c9c57562ddee87003c10d773dea50e",
+          "bytes": 347488,
+          "raw_bytes": 2074620
+        },
+        {
+          "file": "persian-texts-v1-019.jsonl.gz",
+          "rows": 2000,
+          "offset": 36000,
+          "sha256": "df1bc5fb9da82eec80fef0bbb39bd69f2cdd91068993e87a029b8c02bd074679",
+          "bytes": 927494,
+          "raw_bytes": 3884818
+        },
+        {
+          "file": "persian-texts-v1-020.jsonl.gz",
+          "rows": 2000,
+          "offset": 38000,
+          "sha256": "364c1bda1a7b3decc2eddd2d05603ddc6dc393a70bbd852ac6d94230b6431c99",
+          "bytes": 1047439,
+          "raw_bytes": 4277002
+        },
+        {
+          "file": "persian-texts-v1-021.jsonl.gz",
+          "rows": 2000,
+          "offset": 40000,
+          "sha256": "dcfbca4c69c9160cf23e47985850f164efd4c967ed6790f83cac8a4712ac8c18",
+          "bytes": 911030,
+          "raw_bytes": 4013508
+        },
+        {
+          "file": "persian-texts-v1-022.jsonl.gz",
+          "rows": 2000,
+          "offset": 42000,
+          "sha256": "4246980ee6fad5d0de6301e86e711dcbaa74a919ebb5c8adb6d498d237767aa1",
+          "bytes": 872022,
+          "raw_bytes": 3880687
+        },
+        {
+          "file": "persian-texts-v1-023.jsonl.gz",
+          "rows": 2000,
+          "offset": 44000,
+          "sha256": "1d491dc25bf4f3c69f5b3f22148301d57dfb7538f3dfe8cf9aa4463c381e02c4",
+          "bytes": 896119,
+          "raw_bytes": 3935765
+        },
+        {
+          "file": "persian-texts-v1-024.jsonl.gz",
+          "rows": 2000,
+          "offset": 46000,
+          "sha256": "e4cdf80f9dc74a790b4030385a6713ac0c8f5e0dbc5c962e7e5581b984181350",
+          "bytes": 679808,
+          "raw_bytes": 3157502
+        },
+        {
+          "file": "persian-texts-v1-025.jsonl.gz",
+          "rows": 2000,
+          "offset": 48000,
+          "sha256": "122cef3ae658c7949e6796a5365aed1b2e947c72f328876c893da9c80479accf",
+          "bytes": 1516453,
+          "raw_bytes": 5758336
+        },
+        {
+          "file": "persian-texts-v1-026.jsonl.gz",
+          "rows": 2000,
+          "offset": 50000,
+          "sha256": "3c51a27a0f830245e163b78b630da81d99269f9a9e165f23c60f4e670fa0e114",
+          "bytes": 978963,
+          "raw_bytes": 4053712
+        },
+        {
+          "file": "persian-texts-v1-027.jsonl.gz",
+          "rows": 2000,
+          "offset": 52000,
+          "sha256": "2d089eaa5c988323cbcde0ce5622613cb81fbf5b27aaadcb1dfc4fbc99e0df11",
+          "bytes": 1223880,
+          "raw_bytes": 4876407
+        },
+        {
+          "file": "persian-texts-v1-028.jsonl.gz",
+          "rows": 430,
+          "offset": 54000,
+          "sha256": "742c88e8e667d357504698f893f09483ce3d83ee684904954f532920fd88f8e9",
+          "bytes": 133006,
+          "raw_bytes": 617961
+        }
+      ]
+    }
+  ],
+  "authors": 102,
+  "total_rows": 73183,
+  "notes": {
+    "farsi_odd_segment_rows": 1346,
+    "farsi_prose_rows": 460,
+    "missing_hindi_ghazals": 9,
+    "translations_supplied": 0
+  }
+}

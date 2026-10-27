@@ -2,6 +2,7 @@ import { test, before, after } from "node:test";
 import assert from "node:assert/strict";
 import { readFile, readdir } from "node:fs/promises";
 import { PGlite } from "@electric-sql/pglite";
+import { pg_trgm } from "@electric-sql/pglite/contrib/pg_trgm";
 import { createElement } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 import { dictionaryExample, type DictionaryEntry } from "../src/lib/dictionary";
@@ -11,7 +12,7 @@ import {
 } from "../src/lib/dictionary-validation";
 import { DictionaryDefinition } from "../src/components/dictionary-definition";
 import { Reader } from "../src/components/reader";
-const db = new PGlite();
+const db = new PGlite({ extensions: { pg_trgm } });
 const admin = "a0000000-0000-4000-8000-000000000001",
   editor = "a0000000-0000-4000-8000-000000000002",
   reader = "a0000000-0000-4000-8000-000000000003";

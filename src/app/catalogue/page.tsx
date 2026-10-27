@@ -2,22 +2,40 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { listKalam } from "@/lib/data";
 import { firstParam, pageNumber } from "@/lib/query";
-import { forms } from "@/lib/types";
+import { forms, languages, languageLabels, type Language } from "@/lib/types";
 import { KalamCard } from "@/components/kalam-card";
-export const metadata: Metadata = {
-  title: "Explore kalam",
-  description:
-    "Find your next poem. Search the Sukhan library across four scripts.",
-  alternates: { canonical: "/catalogue" },
+type Params = {
+  q?: string | string[];
+  form?: string | string[];
+  page?: string | string[];
+  lang?: string | string[];
 };
+export async function generateMetadata({
+  searchParams,
+}: {
+  searchParams: Promise<Params>;
+}): Promise<Metadata> {
+  const p = await searchParams,
+    q = firstParam(p.q).trim(),
+    page = pageNumber(p.page),
+    lang = firstParam(p.lang),
+    s = new URLSearchParams();
+  if (page > 1) s.set("page", String(page));
+  if (languages.includes(lang as Language)) s.set("lang", lang);
+  if (forms.includes(firstParam(p.form) as (typeof forms)[number]))
+    s.set("form", firstParam(p.form));
+  return {
+    title: "Explore kalam",
+    description:
+      "Browse Urdu and Persian poetry. Read available Urdu, Roman Urdu, Hindi, English and Arabic texts, and discover poets and their works.",
+    alternates: { canonical: "/catalogue" + (s.size ? "?" + s : "") },
+    ...(q ? { robots: { index: false, follow: true } } : {}),
+  };
+}
 export default async function Catalogue({
   searchParams,
 }: {
-  searchParams: Promise<{
-    q?: string | string[];
-    form?: string | string[];
-    page?: string | string[];
-  }>;
+  searchParams: Promise<Params>;
 }) {
   const params = await searchParams;
   const q = firstParam(params.q).slice(0, 160);
@@ -25,11 +43,15 @@ export default async function Catalogue({
     ? firstParam(params.form)
     : undefined;
   const page = pageNumber(params.page);
-  const { items, hasNext } = await listKalam({ q, form, page });
+  const language = languages.includes(firstParam(params.lang) as Language)
+    ? (firstParam(params.lang) as Language)
+    : undefined;
+  const { items, hasNext } = await listKalam({ q, form, page, language });
   function pageUrl(n: number) {
     const s = new URLSearchParams({ page: String(n) });
     if (q) s.set("q", q);
     if (form) s.set("form", form);
+    if (language) s.set("lang", language);
     return `/catalogue?${s}`;
   }
   return (
@@ -61,6 +83,17 @@ export default async function Catalogue({
               </option>
             ))}
           </select>
+          <label className="sr-only" htmlFor="reading-script">
+            Reading script
+          </label>
+          <select id="reading-script" name="lang" defaultValue={language || ""}>
+            <option value="">All scripts</option>
+            {languages.map((l) => (
+              <option key={l} value={l}>
+                {languageLabels[l]}
+              </option>
+            ))}
+          </select>
           <button className="button">Search ↗</button>
         </div>
       </form>
@@ -71,7 +104,12 @@ export default async function Catalogue({
       {items.length ? (
         <div className="card-grid">
           {items.map((k, i) => (
-            <KalamCard key={k.id} kalam={k} index={(page - 1) * 24 + i} />
+            <KalamCard
+              key={k.id}
+              kalam={k}
+              preferredLanguage={language}
+              index={(page - 1) * 24 + i}
+            />
           ))}
         </div>
       ) : (

@@ -3,7 +3,7 @@ export function firstParam(value: string | string[] | undefined) {
 }
 export function pageNumber(value: string | string[] | undefined) {
   return Math.min(
-    1000,
+    10000,
     Math.max(1, Math.floor(Number(firstParam(value)) || 1)),
   );
 }

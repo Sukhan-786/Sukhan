@@ -11,6 +11,8 @@ export function AdminNav() {
         ["/admin/artists", "Poets & artists", "03"],
         ["/admin/media", "Media library", "04"],
         ["/admin/dictionary", "Dictionary", "05"],
+        ["/admin/homepage", "Homepage", "06"],
+        ["/admin/import-poetry", "Import poetry", "07"],
       ].map(([href, label, number]) => {
         const active =
           href === "/admin"

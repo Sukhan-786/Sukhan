@@ -4,7 +4,7 @@ test("homepage, navigation and accessibility", async ({ page }, info) => {
   await page.goto("/");
   await expect(
     page.getByRole("heading", {
-      name: "WORDS THAT STAY",
+      name: /Words that stay/i,
     }),
   ).toBeVisible();
   await expect(
@@ -97,7 +97,10 @@ test("four-script reader switches language, direction and text size", async ({
   await page.getByRole("button", { name: "فارسی", exact: true }).click();
   await expect(page.locator(".poem")).toHaveAttribute("lang", "fa");
   await page.getByLabel("Text size").fill("36");
-  await expect(page.locator(".poem p")).toHaveCSS("font-size", "36px");
+  await expect(page.locator(".passage-original").first()).toHaveCSS(
+    "font-size",
+    "36px",
+  );
   const results = await new AxeBuilder({ page })
     .withTags(["wcag2a", "wcag2aa", "wcag21aa"])
     .analyze();
@@ -177,17 +180,12 @@ test("media library has an honest empty state", async ({ page }) => {
 
 test("homepage collection and poetry controls work", async ({ page }) => {
   await page.goto("/");
-  await page
-    .getByRole("button", { name: "Next collection", exact: true })
-    .click();
+  // The default homepage has one slide; extra slides are managed in the CMS.
   await expect(
-    page.getByRole("heading", { name: "EVERY LINE, A WORLD" }),
-  ).toBeVisible();
-  await page
-    .getByRole("button", { name: "Previous collection", exact: true })
-    .click();
+    page.getByRole("button", { name: "Next collection", exact: true }),
+  ).toHaveCount(0);
   await expect(
-    page.getByRole("heading", { name: "WORDS THAT STAY" }),
+    page.getByRole("heading", { name: /Words that stay/i }),
   ).toBeVisible();
   const featured = page.getByRole("region", {
     name: "Featured poetry",
@@ -201,14 +199,11 @@ test("homepage collection and poetry controls work", async ({ page }) => {
   await expect(featured.locator(".featured-translation")).toContainText(
     "A lamp of words",
   );
-  await featured
-    .getByRole("button", { name: "Next poem", exact: true })
-    .click();
-  await expect(featured.locator("blockquote")).toContainText(
-    "The evening leaves",
-  );
+  await expect(
+    featured.getByRole("button", { name: "Next poem", exact: true }),
+  ).toHaveCount(0);
   const downloadPromise = page.waitForEvent("download");
   await featured.getByRole("button", { name: "Download", exact: true }).click();
   const download = await downloadPromise;
-  expect(download.suggestedFilename()).toBe("the-evening-page-en.txt");
+  expect(download.suggestedFilename()).toBe("a-lamp-of-words-ur.txt");
 });

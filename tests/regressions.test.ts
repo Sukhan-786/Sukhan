@@ -6,6 +6,6 @@ test("repeated query values are safe and pagination stays within bounds", () => 
   assert.equal(firstParam(undefined), "");
   assert.equal(pageNumber("-3"), 1);
   assert.equal(pageNumber("2.5"), 2);
-  assert.equal(pageNumber("Infinity"), 1000);
+  assert.equal(pageNumber("Infinity"), 10000);
   assert.equal(pageNumber("bad"), 1);
 });

@@ -91,6 +91,10 @@ export async function renderEditor(
           <Link href={`/admin/kalam/${id}/meanings`}>
             Manage reviewed word meanings →
           </Link>
+          {" · "}
+          <Link href={`/admin/kalam/${id}/translations`}>
+            Manage Persian / Arabic translations →
+          </Link>
         </p>
       )}
       <Editor

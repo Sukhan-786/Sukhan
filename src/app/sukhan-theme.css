@@ -1,0 +1,1190 @@
+/* Sukhan's navy, lilac and white palette, based on the supplied mobile designs. */
+:root {
+  --pink: #2b2b49;
+  --rust: #2b2b49;
+  --ink: #25253e;
+  --paper: #fff;
+  --line: #e6e3ec;
+  --muted: #6b677b;
+  --navy: #2b2b49;
+  --lilac: #eee9f4;
+}
+@theme {
+  --color-rust: #2b2b49;
+  --color-ink: #25253e;
+}
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+summary:focus-visible {
+  outline-color: #7773aa;
+}
+input,
+select,
+textarea {
+  border-color: #d8d3e2;
+  border-radius: 8px;
+}
+.site-header {
+  background: #fff;
+  color: var(--navy);
+}
+.brand {
+  color: var(--navy);
+}
+.header-search {
+  border: 1px solid var(--line);
+  box-shadow: none;
+  border-radius: 28px;
+  background: #f7f5fa;
+  overflow: hidden;
+}
+.header-search input {
+  background: transparent;
+}
+.header-locale {
+  border: 0;
+  color: var(--navy);
+}
+.header-cta {
+  border-radius: 6px;
+}
+.home-banner,
+.banner-navy {
+  background: #eae5f0;
+  color: var(--navy);
+  position: relative;
+}
+.banner-content {
+  position: relative;
+  z-index: 1;
+}
+.banner-image {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.home-banner:has(.banner-image) .banner-copy {
+  background: #ffffffe8;
+  border-radius: 14px;
+  margin: 20px;
+}
+.banner-art {
+  color: var(--navy);
+}
+.banner-copy h2 {
+  font-size: clamp(38px, 5vw, 72px);
+  letter-spacing: -2px;
+  line-height: 1.08;
+}
+.banner-copy h2 span {
+  display: block;
+}
+.banner-copy > a {
+  background: var(--navy);
+  color: white;
+  border-radius: 5px;
+}
+.banner-arrow {
+  color: var(--navy);
+}
+.featured-poetry {
+  color: #fff;
+  background: var(--navy);
+  padding: 30px 34px 18px;
+  border-radius: 18px;
+  margin-top: 24px;
+  margin-bottom: 28px;
+}
+.featured-poetry .section-label {
+  display: table;
+  padding: 7px 28px;
+  margin: 0 auto 22px;
+  border-radius: 7px;
+  background: #fff;
+  color: var(--navy);
+  font-size: 12px;
+  letter-spacing: 1.5px;
+  line-height: 1.4;
+}
+.featured-verse {
+  min-height: 90px;
+}
+.featured-verse p {
+  font-size: inherit;
+  line-height: 2.1;
+}
+.featured-author {
+  color: #ece8f4;
+  margin-top: 18px;
+}
+.featured-poetry .poetry-arrow {
+  color: #fff;
+  border: 0;
+  background: transparent;
+}
+.poetry-toolbar {
+  border-color: #ffffff30;
+  margin-top: 24px;
+  gap: 16px;
+}
+.featured-scripts button {
+  color: #ded9ed;
+}
+.featured-scripts button[aria-pressed="true"] {
+  color: var(--navy);
+  background: white;
+  border-color: white;
+}
+.feature-status {
+  color: #ece8f4;
+}
+.home-section {
+  padding: 34px 0;
+}
+.home-discover,
+.home-library {
+  background: #faf9fc;
+}
+.discovery-card > div {
+  background: #e9e3f0;
+  color: var(--navy);
+  border-radius: 13px;
+  height: 180px;
+}
+.discovery-nazm > div {
+  background: #dfdced;
+}
+.discovery-voices > div {
+  background: #e9e7ef;
+}
+.discovery-card {
+  color: var(--navy);
+}
+.home-word {
+  background: #f0ecf6;
+  color: var(--navy);
+  padding: 38px 20px;
+}
+.artist-seal {
+  background: #eeebf3;
+  color: var(--navy);
+  border-color: #ded8e9;
+}
+.kalam-card {
+  border-radius: 12px;
+  background: #fff;
+}
+.kalam-card h3 {
+  overflow-wrap: anywhere;
+}
+.page-heading h1,
+.work-heading h1 {
+  color: var(--navy);
+}
+.reader {
+  border-color: var(--line);
+}
+.reader-toolbar {
+  background: #f7f5fa;
+  border-radius: 10px;
+}
+.script-tabs button {
+  border-radius: 7px;
+}
+.script-tabs button[aria-pressed="true"] {
+  background: var(--navy);
+  border-color: var(--navy);
+  color: #fff;
+}
+.meaning-word:hover,
+.dictionary-word:hover,
+.meaning-word:focus-visible,
+.dictionary-word:focus-visible {
+  background: var(--lilac);
+  color: var(--navy);
+}
+.meaning-dialog {
+  width: min(460px, calc(100% - 32px));
+  max-height: 75dvh;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 20px 22px;
+  color: var(--ink);
+  box-shadow: 0 14px 60px #25253e30;
+}
+.meaning-dialog::backdrop {
+  background: #17162965;
+}
+.meaning-dialog h2 {
+  font-size: 25px;
+  margin: 0 0 10px;
+  padding-inline-end: 48px;
+  line-height: 1.5;
+}
+.meaning-close {
+  position: absolute;
+  right: 12px;
+  top: 12px;
+  background: var(--lilac);
+  color: var(--navy);
+  font-size: 12px;
+  border-radius: 20px;
+  min-height: 32px;
+  padding: 4px 10px;
+}
+.meaning-reviewed {
+  font-size: 10px;
+  color: var(--muted);
+  margin: 0 0 10px;
+  letter-spacing: 0.2px;
+}
+.meaning-dialog dl > div {
+  padding: 6px 0;
+  border-color: var(--line);
+}
+.meaning-dialog dt {
+  font-size: 11px;
+}
+.meaning-dialog dd {
+  margin: 0;
+  font-size: 14px;
+}
+.meaning-dialog [lang="ur"],
+.meaning-dialog [lang="fa"] {
+  font-size: 20px;
+  line-height: 1.9;
+}
+.meaning-dialog [lang="hi"] {
+  font-size: 15px;
+}
+.meaning-dialog [lang="ar"] {
+  font-size: 19px;
+  line-height: 1.8;
+}
+.dictionary-definition {
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 22px;
+  margin: 12px 0;
+}
+.dictionary-definition h2,
+.dictionary-definition h3 {
+  font-size: 24px;
+  margin: 0 0 8px;
+}
+.dictionary-definition h4 {
+  font-size: 12px;
+  margin: 12px 0 4px;
+}
+.dictionary-definition ul {
+  margin: 8px 0 12px;
+  padding-inline-start: 20px;
+  font-size: 15px;
+}
+.dictionary-definition p {
+  margin: 6px 0;
+}
+.dictionary-definition small,
+.meaning-source {
+  font-size: 11px;
+  color: var(--muted);
+  line-height: 1.6;
+}
+.dictionary-spellings {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin: 8px 0;
+}
+.dictionary-spellings > div {
+  display: flex;
+  gap: 6px;
+  align-items: baseline;
+}
+.dictionary-spellings dt {
+  font-size: 10px;
+  color: var(--muted);
+}
+.dictionary-spellings dd {
+  font-size: 17px;
+  margin: 0;
+}
+.dictionary-spellings dd[lang="ur"] {
+  font-size: 23px;
+}
+.meaning-dialog .dictionary-definition {
+  border: 0;
+  border-radius: 0;
+  padding: 0;
+  margin: 8px 0;
+}
+.meaning-dialog .dictionary-spellings {
+  gap: 12px;
+}
+.meaning-dialog .dictionary-spellings > div {
+  border: 0;
+  padding: 0;
+  display: block;
+}
+.meaning-dialog .dictionary-spellings dt {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+}
+.meaning-dialog .dictionary-definition > section {
+  margin: 10px 0;
+}
+.meaning-dialog .dictionary-definition > section h3,
+.meaning-dialog .dictionary-definition > section h4 {
+  font-size: 12px;
+  line-height: 1.5;
+  margin: 10px 0 4px;
+  color: var(--muted);
+}
+.dictionary-pos {
+  color: var(--muted);
+  font-size: 12px;
+}
+.dictionary-definition a {
+  color: #4f497a;
+  font-size: 12px;
+}
+.mobile-bottom-nav {
+  display: none;
+}
+.studio-sidebar {
+  background: #f6f4f9;
+  border-color: var(--line);
+}
+.studio-links a[aria-current="page"] {
+  color: #fff;
+  background: var(--navy);
+}
+.studio-main {
+  background: #fbfafc;
+}
+.studio-main a:not(.button):not(.record-title) {
+  color: var(--navy);
+}
+.studio-review {
+  background: #eeebf5;
+  border-color: #ded8ea;
+}
+.homepage-builder-top {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  flex-wrap: wrap;
+  padding: 14px 0;
+  position: sticky;
+  top: 0;
+  background: #fbfafcf5;
+  z-index: 6;
+}
+.homepage-builder-top p {
+  margin: 0;
+  flex: 1;
+  font-size: 12px;
+  color: var(--muted);
+}
+.homepage-builder-form {
+  display: grid;
+  grid-template-columns: 235px minmax(0, 1fr);
+  gap: 20px;
+  align-items: start;
+}
+.homepage-builder fieldset {
+  min-width: 0;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 18px;
+  background: #fff;
+}
+.homepage-builder legend {
+  font-weight: 700;
+  padding: 0 6px;
+  font-size: 14px;
+}
+.homepage-section-list {
+  position: sticky;
+  top: 80px;
+}
+.homepage-section-list ol {
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 8px;
+}
+.homepage-section-list li {
+  padding: 10px;
+  border-radius: 7px;
+  background: #f8f7fa;
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.homepage-section-list li.selected {
+  background: var(--lilac);
+  box-shadow: inset 3px 0 var(--navy);
+}
+.homepage-section-list li > button {
+  background: transparent;
+  text-align: left;
+  flex: 1;
+  font-size: 12px;
+}
+.homepage-section-list li > span {
+  font-size: 10px;
+  color: var(--muted);
+}
+.homepage-section-list li > div {
+  display: flex;
+  gap: 4px;
+}
+.homepage-section-list li > div button {
+  min-width: 32px;
+  min-height: 32px;
+  background: #fff;
+  border-radius: 5px;
+}
+.homepage-builder label {
+  display: grid;
+  gap: 6px;
+  margin: 12px 0;
+}
+.homepage-builder label.meaning-review-check {
+  display: flex;
+}
+.homepage-builder input,
+.homepage-builder textarea,
+.homepage-builder select {
+  width: 100%;
+}
+.homepage-builder input[type="checkbox"] {
+  width: 20px;
+}
+.homepage-builder small,
+.homepage-picker p {
+  font-size: 11px;
+  color: var(--muted);
+}
+.homepage-builder .homepage-slide {
+  margin: 12px 0;
+}
+.homepage-picker ul {
+  list-style: none;
+  padding: 0;
+  display: grid;
+  gap: 8px;
+}
+.homepage-picker li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  font-size: 12px;
+  padding: 8px;
+  background: #f8f7fa;
+  border-radius: 6px;
+}
+.homepage-builder [aria-disabled="true"] {
+  opacity: 0.5;
+}
+.homepage-builder-form > fieldset:last-child {
+  grid-column: 2;
+}
+.homepage-preview-notice {
+  padding: 12px 24px;
+  background: var(--navy);
+  color: #fff;
+  display: flex;
+  gap: 24px;
+  justify-content: space-between;
+  font-size: 12px;
+}
+.admin-layout:has(.homepage-preview) {
+  display: block;
+  max-width: none;
+  margin: 0;
+  border: 0;
+  background: #fff;
+}
+.admin-layout:has(.homepage-preview) .studio-sidebar {
+  display: none;
+}
+.admin-layout:has(.homepage-preview) .studio-main {
+  padding: 0;
+  background: #fff;
+}
+.banner-copy,
+.featured-verse,
+.poem {
+  overflow-wrap: anywhere;
+}
+@media (max-width: 767px) {
+  body:has(.mobile-bottom-nav) {
+    padding-bottom: 90px;
+  }
+  .site-header {
+    background: #fff;
+  }
+  .header-row {
+    height: 99px;
+    grid-template-rows: 42px 40px;
+    padding: 6px 18px;
+  }
+  .brand {
+    font: 17px var(--serif);
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+  }
+  .brand-group {
+    gap: 10px;
+  }
+  .header-tools > .header-cta,
+  .header-tools > .site-grid {
+    display: none;
+  }
+  .header-locale {
+    background: var(--navy);
+    color: #fff;
+    padding: 4px 13px;
+    border-radius: 20px;
+    font-size: 10px;
+  }
+  .header-search {
+    height: 36px;
+    border: 0;
+    background: var(--lilac);
+  }
+  .header-search input {
+    height: 36px;
+  }
+  .site-header .mobile-nav {
+    display: none;
+  }
+  .site-header .mobile-menu nav {
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    box-shadow: 0 10px 30px #25253e20;
+    z-index: 30;
+    padding: 12px;
+    min-width: 200px;
+  }
+  .mobile-bottom-nav {
+    display: flex;
+    position: fixed;
+    z-index: 20;
+    bottom: max(14px, env(safe-area-inset-bottom));
+    left: 50%;
+    transform: translateX(-50%);
+    width: min(370px, calc(100% - 30px));
+    border: 1px solid #e9e5ef;
+    background: #f7f6faed;
+    backdrop-filter: blur(12px);
+    padding: 6px 12px;
+    justify-content: space-around;
+    border-radius: 32px;
+    box-shadow: 0 5px 20px #25253e10;
+  }
+  .mobile-bottom-nav a {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 58px;
+    min-height: 48px;
+    color: #77718d;
+    border-radius: 22px;
+    font-size: 9px;
+    line-height: 1.2;
+  }
+  .mobile-bottom-nav a[aria-current="page"] {
+    background: var(--navy);
+    color: #fff;
+  }
+  .home-banner {
+    height: 56.25vw;
+    min-height: 200px;
+  }
+  .banner-copy h2 {
+    font-size: clamp(29px, 7vw, 48px);
+    letter-spacing: -1px;
+  }
+  .banner-copy .banner-subtitle {
+    font-size: 12px;
+    line-height: 1.5;
+  }
+  .home-banner:has(.banner-image) .banner-copy {
+    margin: 10px;
+    padding: 12px;
+  }
+  .content-width {
+    margin-left: 16px;
+    margin-right: 16px;
+  }
+  .featured-poetry {
+    margin: 12px 12px 22px;
+    padding: 20px 18px 8px;
+    border-radius: 0 0 17px 17px;
+  }
+  .featured-poetry .section-label {
+    font-size: 10px;
+    letter-spacing: 1px;
+    margin-bottom: 16px;
+    padding: 6px 20px;
+  }
+  .featured-verse {
+    padding: 0 16px;
+    min-height: 90px;
+  }
+  .featured-verse[dir="rtl"] {
+    font-size: 26px;
+  }
+  .featured-author {
+    margin-top: 12px;
+    font-size: 11px;
+  }
+  .poetry-toolbar {
+    margin-top: 18px;
+    gap: 10px;
+  }
+  .featured-scripts {
+    max-width: 100%;
+    flex-wrap: wrap;
+  }
+  .featured-scripts button {
+    padding: 4px 6px;
+  }
+  .discovery-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+    margin-top: 18px;
+  }
+  .discovery-card {
+    display: block;
+  }
+  .discovery-card > div {
+    height: 130px;
+  }
+  .discovery-card h3 {
+    font-size: 16px;
+    margin: 12px 0 5px;
+  }
+  .discovery-card > p {
+    font-size: 12px;
+  }
+  .discovery-card > div > span {
+    font-size: 40px;
+  }
+  .home-section {
+    padding: 26px 0;
+  }
+  .section-label {
+    font-size: 12px;
+    letter-spacing: 2px;
+    margin-bottom: 20px;
+  }
+  .home-artists {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+  }
+  .home-artist {
+    min-width: 0;
+    max-width: none;
+  }
+  .home-artist .artist-seal {
+    width: 104px;
+    height: 104px;
+    font-size: 22px;
+    margin-bottom: 12px;
+  }
+  .home-artist h3 {
+    font-size: 15px;
+  }
+  .home-artist p {
+    font-size: 11px;
+  }
+  .meaning-dialog {
+    width: 100%;
+    max-width: none;
+    max-height: 65dvh;
+    margin: auto 0 0;
+    border-radius: 18px 18px 0 0;
+    padding: 18px 22px calc(20px + env(safe-area-inset-bottom));
+  }
+  .meaning-dialog h2 {
+    margin-bottom: 6px;
+  }
+  .meaning-dialog .dictionary-definition [lang="ur"] {
+    font-size: 21px;
+  }
+  .reading-shell {
+    padding: 28px 18px;
+  }
+  .work-heading h1 {
+    font-size: 26px;
+    overflow-wrap: anywhere;
+  }
+  .reader-toolbar {
+    gap: 12px;
+    padding: 12px;
+  }
+  .reader .script-tabs {
+    gap: 4px;
+  }
+  .reader .script-tabs button {
+    font-size: 12px;
+    min-height: 38px;
+    padding: 6px 10px;
+  }
+  .meaning-hint,
+  .reader-note {
+    font-size: 11px;
+  }
+  .homepage-builder-form {
+    display: block;
+  }
+  .homepage-builder-form > fieldset {
+    margin-bottom: 18px;
+  }
+  .homepage-section-list {
+    position: static;
+  }
+  .homepage-builder-top {
+    position: static;
+  }
+  .homepage-builder-top .button {
+    font-size: 12px;
+  }
+  .homepage-builder-top p {
+    flex-basis: 100%;
+  }
+  .homepage-preview-notice {
+    flex-direction: column;
+    gap: 4px;
+  }
+}
+.banner-art > small,
+.banner-copy .banner-subtitle,
+.banner-copy > p:first-child {
+  color: #57516f;
+}
+.banner-art > span {
+  text-shadow: none;
+}
+.banner-orbit {
+  border-color: #7f759333;
+  background: radial-gradient(circle, #d9d2e6 40%, transparent 41%);
+  box-shadow:
+    0 0 0 16px #bfb3d10c,
+    0 0 0 17px #aca0bf22;
+}
+.banner-orbit:before,
+.banner-orbit:after {
+  border-color: #9b8eac30;
+}
+.featured-poetry .poetry-toolbar > button,
+.featured-poetry .poetry-toolbar > a {
+  color: #fff;
+  background: transparent;
+}
+.featured-poetry .poetry-toolbar > button:disabled {
+  color: #d5cfe0;
+  opacity: 0.6;
+}
+.pink-link,
+.text-link,
+.eyebrow {
+  color: var(--navy);
+}
+.homepage-section-list {
+  grid-row: 1 / span 3;
+}
+.homepage-builder-form > fieldset:not(.homepage-section-list),
+.homepage-save {
+  grid-column: 2;
+}
+.homepage-builder .button + small {
+  display: block;
+  margin-top: 10px;
+}
+.homepage-builder .text-link {
+  padding: 10px 6px;
+}
+@media (max-width: 767px) {
+  .homepage-section-list {
+    grid-row: auto;
+  }
+  .homepage-builder-form > fieldset {
+    margin-bottom: 18px;
+  }
+}
+.featured-poetry .poetry-toolbar svg {
+  color: inherit;
+}
+.mobile-bottom-nav a {
+  color: #625c77;
+}
+.mobile-bottom-nav a[aria-current="page"] {
+  color: #fff;
+}
+.feature-status {
+  position: static;
+  display: block;
+  pointer-events: none;
+  margin-top: 10px;
+  min-height: 18px;
+  text-align: center;
+}
+.studio-wordmark span,
+.studio-links a > span {
+  color: #625c70;
+}
+.studio-links a[aria-current="page"] > span {
+  color: #e4dff0;
+}
+.studio-main p a,
+.meaning-source a,
+.dictionary-definition a {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.passage {
+  margin: 0 auto 26px;
+  padding-bottom: 22px;
+  border-bottom: 1px solid var(--line);
+}
+.passage-original {
+  white-space: pre-wrap;
+  margin: 0;
+  line-height: 2.2;
+}
+.passage-translation {
+  margin: 16px auto 0;
+  max-width: 720px;
+  color: #655c78;
+}
+.passage-translation p {
+  font-family: var(--sans);
+  font-size: 16px;
+  line-height: 1.8;
+  white-space: pre-wrap;
+  margin: 0;
+}
+.passage-translation[lang="ur"] p {
+  font:
+    20px/2 "Mehr Nastaliq",
+    serif;
+}
+.passage-translation details {
+  font: 11px/1.6 var(--sans);
+  text-align: start;
+  margin-top: 8px;
+}
+.translation-language {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+  margin: 0 0 24px;
+  font: 12px var(--sans);
+}
+.translation-language select {
+  padding: 6px 10px;
+  font-size: 13px;
+}
+.translation-empty {
+  font: 12px/1.6 var(--sans);
+  color: var(--muted);
+  text-align: center;
+}
+.translation-editor {
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+  gap: 24px;
+}
+.translation-editor label {
+  display: grid;
+  gap: 8px;
+  margin: 12px 0;
+}
+.translation-editor label.meaning-review-check {
+  display: flex;
+}
+.translation-original {
+  font:
+    24px/2.2 "Mehr Nastaliq",
+    serif;
+  white-space: pre-wrap;
+  padding: 20px;
+  background: var(--lilac);
+  border-radius: 10px;
+  margin: 16px 0;
+}
+.translation-list {
+  list-style: none;
+  padding: 0;
+  display: grid;
+  gap: 12px;
+}
+.translation-list a {
+  display: block;
+  border: 1px solid var(--line);
+  padding: 12px;
+  border-radius: 8px;
+  background: #fff;
+}
+.translation-list span,
+.translation-list small {
+  display: block;
+}
+.translation-list span {
+  font:
+    18px/2 "Mehr Nastaliq",
+    serif;
+}
+.translation-list small {
+  font-size: 11px;
+  color: var(--muted);
+}
+@media (max-width: 767px) {
+  .translation-editor {
+    display: block;
+  }
+  .passage-translation p {
+    font-size: 14px;
+  }
+  .passage-translation[lang="ur"] p {
+    font-size: 18px;
+  }
+}
+.poetry-import-panel {
+  max-width: 900px;
+  border: 1px solid var(--line);
+  background: #fff;
+  border-radius: 12px;
+  padding: 26px;
+}
+.poetry-import-panel > p {
+  font-size: 14px;
+  color: var(--muted);
+}
+.poetry-import-panel > a {
+  text-decoration: underline;
+  font-size: 13px;
+}
+.poetry-import-panel ul {
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 10px;
+  margin: 22px 0;
+}
+.poetry-import-panel li {
+  padding: 12px;
+  background: #f6f4fa;
+  border-radius: 8px;
+  display: flex;
+  gap: 14px;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  font-size: 13px;
+}
+.poetry-import-progress {
+  margin: 24px 0;
+}
+.poetry-import-progress progress {
+  width: 100%;
+  accent-color: var(--navy);
+  height: 20px;
+}
+.poetry-import-progress p {
+  font-size: 12px;
+}
+.poetry-import-panel .button {
+  margin: 8px 10px 0 0;
+}
+.reading-menu {
+  position: relative;
+}
+.reading-menu summary {
+  list-style: none;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.reading-menu summary::-webkit-details-marker {
+  display: none;
+}
+.site-header .reading-menu nav {
+  display: block;
+  position: absolute;
+  right: 0;
+  top: 100%;
+  min-width: 150px;
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 10px;
+  margin: 8px 0;
+  z-index: 30;
+}
+.site-header .reading-menu nav a {
+  display: block;
+  padding: 8px 12px;
+}
+.card-verse[lang="fa"],
+.card-verse[lang="ar"] {
+  font-size: 23px;
+  line-height: 2.1;
+}
+.kalam-card h3 a[dir="rtl"] {
+  display: block;
+  font:
+    24px/2 "Mehr Nastaliq",
+    serif;
+}
+@media (max-width: 767px) {
+  .reading-menu summary {
+    padding: 6px 12px;
+  }
+  .search-row {
+    flex-wrap: wrap;
+  }
+  .search-row select {
+    flex: 1;
+    min-width: 120px;
+  }
+}
+.artist-search {
+  display: flex;
+  gap: 10px;
+  max-width: 650px;
+  margin-bottom: 16px;
+}
+.artist-search input {
+  flex: 1;
+  width: 0;
+  background: var(--lilac);
+  border: 0;
+  border-radius: 24px;
+  padding-inline: 20px;
+}
+.artist-search .button {
+  border-radius: 24px;
+}
+.artist-directory {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0 35px;
+}
+.artist-directory-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  border-bottom: 1px solid var(--line);
+  padding: 20px 0;
+  min-width: 0;
+}
+.artist-initial {
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
+  background: var(--lilac);
+  color: var(--navy);
+  display: grid;
+  place-items: center;
+  font-size: 22px;
+  flex-shrink: 0;
+}
+.artist-directory-row > div {
+  min-width: 0;
+  flex: 1;
+}
+.artist-directory-row h2 {
+  font-size: 18px;
+  margin: 0 0 3px;
+  overflow-wrap: anywhere;
+}
+.artist-directory-row p {
+  font:
+    20px/1.8 "Mehr Nastaliq",
+    serif;
+  margin: 0;
+  text-align: start;
+}
+.artist-directory-row small {
+  font-size: 11px;
+  color: var(--muted);
+}
+.directory-open {
+  min-height: 40px;
+  min-width: 40px;
+  display: grid;
+  place-items: center;
+  color: var(--navy);
+  border-radius: 50%;
+}
+@media (max-width: 767px) {
+  .artist-directory {
+    display: block;
+  }
+  .artist-directory-row {
+    padding: 16px 0;
+  }
+  .artist-search .button {
+    padding: 10px 15px;
+    font-size: 12px;
+  }
+}
+.source-definition section {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.dictionary-definition.source-definition section h3,
+.dictionary-definition.source-definition section h4 {
+  font: 12px/1.6 var(--sans);
+  margin: 0;
+  color: var(--muted);
+}
+.source-definition .wazan-value {
+  font-size: 18px;
+  letter-spacing: 1px;
+  color: var(--navy);
+}
+.source-definition-missing {
+  font-size: 12px;
+  color: var(--muted);
+}
+.source-definition details {
+  font-size: 12px;
+  margin: 10px 0;
+  color: var(--muted);
+}
+.source-definition details small {
+  display: block;
+  margin-top: 8px;
+}
+.artist-directory-row h2:dir(rtl),
+.page-heading h1:dir(rtl),
+.work-heading h1:dir(rtl) {
+  font-family: "Mehr Nastaliq", serif;
+  line-height: 2;
+}
+.work-heading h1[lang="ar"] {
+  font-family: "Noto Naskh Arabic", "Geeza Pro", serif;
+}

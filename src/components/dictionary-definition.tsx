@@ -63,9 +63,6 @@ export function DictionaryDefinition({
           </section>
         ) : null,
       )}
-      {!entry.arabic_meanings?.length && (
-        <p>Arabic meanings have not been added yet.</p>
-      )}
       {!!entry.wazan?.length && (
         <section aria-label="Reviewed wazan">
           <Subheading>Wazan · وزن</Subheading>
