@@ -73,6 +73,20 @@ async function main() {
       "Full isolated import verified:",
       JSON.stringify(counts.rows[0]),
     );
+    await db.exec("reset role;analyze;set role anon");
+    const searchStart = performance.now();
+    const search = await db.query(
+      "select id from search_library('Rudaki',null,null,null,'fa') limit 24",
+    );
+    if (!search.rows.length)
+      throw Error("Imported author search returned no works");
+    console.log(
+      "Full-corpus anonymous search verified:",
+      JSON.stringify({
+        results: search.rows.length,
+        milliseconds: Math.round(performance.now() - searchStart),
+      }),
+    );
     const size = await db.query(
       "select pg_size_pretty(pg_database_size(current_database())) database_size",
     );
