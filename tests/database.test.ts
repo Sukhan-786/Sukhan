@@ -168,6 +168,7 @@ test("every exposed table has RLS enabled", async () => {
       "couplet_translations",
       "poetry_imports",
       "poetry_import_records",
+      "library_search_documents",
       "urdu_word_bank",
       "word_bank_import",
     ].sort(),

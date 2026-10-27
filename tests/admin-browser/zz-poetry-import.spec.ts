@@ -1,4 +1,6 @@
 import { test, expect } from "@playwright/test";
+import { readFileSync } from "node:fs";
+import { gunzipSync } from "node:zlib";
 test("supplied poetry import checks the real shard and resumes after a saved batch", async ({
   page,
 }) => {
@@ -61,7 +63,14 @@ test("supplied poetry import checks the real shard and resumes after a saved bat
   await expect(page.locator("main").getByRole("alert")).toHaveCount(0);
   await page.goto("/catalogue?lang=roman");
   await expect(page.locator(".kalam-card")).not.toHaveCount(0);
-  await page.locator(".kalam-card h3 a").first().click();
+  // Open a known imported work; an unrelated published fixture can appear first
+  // in the catalogue, and its attribution must not be mistaken for corpus data.
+  const imported = JSON.parse(
+    gunzipSync(readFileSync("public/data/poetry/urdu-ghazals-v1-001.jsonl.gz"))
+      .toString("utf8")
+      .split("\n", 1)[0],
+  ) as { slug: string };
+  await page.goto(`/kalam/${imported.slug}?lang=roman`);
   await expect(page.locator(".poem")).toHaveAttribute("lang", "ur-Latn");
   await expect(page.locator(".provenance")).toContainText(
     "User-supplied Urdu corpus",

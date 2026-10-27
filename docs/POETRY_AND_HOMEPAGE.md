@@ -39,6 +39,8 @@ The new palette follows the supplied navy/lilac/white mobile design, with a comp
 
 The larger catalogue uses indexed, normalized literal substring search with `pg_trgm`; wildcard and SQL-like input remain literal. Catalogue and author-work pagination can reach the complete supplied collection. Per-script reading URLs expose canonical/hreflang metadata for available versions. Roman Urdu uses `ur-Latn`. The verified custom domain `https://sukhan.co.in` is the canonical address when the configured URL is the old Vercel alias; explicit local/test URLs stay unchanged.
 
+Anonymous search uses a trigram-indexed projection containing only published works with published authors. Private trigger functions maintain it in the same transaction as text/publication edits; API roles cannot write it or invoke its maintenance functions. Original tables retain their RLS. This avoids the live timeout caused by normalizing full poem bodies below RLS security barriers. Changes to author or work publication immediately remove private texts from the projection as well as search results.
+
 `/sitemap-index.xml` lists bounded metadata-only sitemaps of 1,000 works/definitions each. `/sitemap.xml` is a small core sitemap. Robots references the index, excludes protected routes, and word-bank/search browse pages avoid thin-page indexing. Only reviewed dictionary detail pages are indexable. Search engines decide indexing and rankings.
 
 Google Tag Manager `GTM-MWXQC8X9` was released separately and detected by Google's installation test. This revision preserves its exclusion from protected studio/account routes. GA4 tags and Search Console verification are separate configuration steps.
