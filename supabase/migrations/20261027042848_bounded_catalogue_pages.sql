@@ -1,4 +1,7 @@
 begin;
+-- Acquire the source-table DDL lock before the projection lock. Hosted advisors
+-- inspect source tables first; upgrading this lock after the backfill deadlocked.
+lock table public.kalam in access exclusive mode;
 -- Page through small public metadata before joining the RLS-protected source
 -- tables. Deep offsets must not re-check every poem's text and author policies.
 alter table public.library_search_documents
