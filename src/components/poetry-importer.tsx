@@ -123,10 +123,12 @@ export function PoetryImporter({ initial }: { initial: PoetryProgress[] }) {
         "Import complete. Source attributions are kept on every published work. Translations can now be added in the poem editor.",
       );
     } catch (e) {
+      const detail = e instanceof Error ? e.message : "";
+      setMessage("");
       setError(
-        e instanceof Error
-          ? e.message
-          : "Import stopped. Resume to retry safely.",
+        /Minified React error|Server Components render/.test(detail)
+          ? "The server request was interrupted. Your saved progress is safe. Resume the import to continue."
+          : detail || "Import stopped. Resume to retry safely.",
       );
     } finally {
       setRunning(false);
