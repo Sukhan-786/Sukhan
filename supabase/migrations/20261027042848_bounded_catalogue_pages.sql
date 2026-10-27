@@ -13,7 +13,8 @@ alter table public.library_search_documents
   alter column form set not null,
   alter column created_at set not null,
   alter column languages set not null;
-create index library_search_documents_order_idx on public.library_search_documents(created_at desc,kalam_id);
+create index library_search_documents_order_idx on public.library_search_documents(created_at desc,kalam_id)
+  include (poet_id,form,languages);
 create index library_search_documents_languages_idx on public.library_search_documents using gin(languages);
 
 create or replace function private.refresh_library_search_documents(work_ids uuid[])
