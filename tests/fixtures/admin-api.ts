@@ -209,6 +209,7 @@ async function main() {
           [
             "rpc/search_kalam",
             "rpc/search_library",
+            "rpc/search_library_page",
             "rpc/homepage_kalam",
           ].includes(endpoint)
         ) {
@@ -216,9 +217,11 @@ async function main() {
             await db.query<Record<string, unknown>>(
               endpoint === "rpc/homepage_kalam"
                 ? "select * from public.homepage_kalam($1,$2)"
-                : endpoint === "rpc/search_library"
-                  ? "select * from public.search_library($1,$2,$3,$4,$5)"
-                  : "select * from public.search_kalam($1,$2,$3,$4)",
+                : endpoint === "rpc/search_library_page"
+                  ? "select * from public.search_library_page($1,$2,$3,$4,$5,$6)"
+                  : endpoint === "rpc/search_library"
+                    ? "select * from public.search_library($1,$2,$3,$4,$5)"
+                    : "select * from public.search_kalam($1,$2,$3,$4)",
               endpoint === "rpc/homepage_kalam"
                 ? [body.feed_language || null, body.requested_ids || []]
                 : [
@@ -226,8 +229,14 @@ async function main() {
                     body.filter_form || null,
                     body.filter_poet || null,
                     body.filter_kind || null,
-                    ...(endpoint === "rpc/search_library"
+                    ...([
+                      "rpc/search_library",
+                      "rpc/search_library_page",
+                    ].includes(endpoint)
                       ? [body.filter_language || null]
+                      : []),
+                    ...(endpoint === "rpc/search_library_page"
+                      ? [body.page_number || 1]
                       : []),
                   ],
             )

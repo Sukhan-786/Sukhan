@@ -145,3 +145,43 @@ test("unpublished authors disappear from direct search documents and return only
   );
   await db.exec("reset role");
 });
+
+test("catalogue pagination returns one bounded page with stable ordering and live script/form filters", async () => {
+  await db.exec("set role anon");
+  const page = async (
+    number: number,
+    query = "",
+    language = "ur",
+    form: string | null = null,
+  ) =>
+    (
+      await db.query<{ id: string; slug: string }>(
+        "select id,slug from search_library_page($1,$2,null,null,$3,$4)",
+        [query, form, language, number],
+      )
+    ).rows;
+  const first = await page(1),
+    second = await page(2);
+  assert.equal(first.length, 25);
+  assert.equal(second.length, 25);
+  assert.equal(
+    new Set([...first.slice(0, 24), ...second.slice(0, 24)].map((r) => r.id))
+      .size,
+    48,
+  );
+  assert.deepEqual(await page(1), first);
+  assert.equal((await page(35)).length, 25);
+  assert.equal((await page(42)).length, 15);
+  assert.equal((await page(43)).length, 0);
+  assert.equal((await page(35, "Scale Poet")).length, 25);
+  assert.equal((await page(1, "Private needle")).length, 0);
+  await db.exec(
+    "reset role;update kalam set form='prose' where slug='scale-2';update kalam_texts set language='fa' where kalam_id=(select id from kalam where slug='scale-2');set role anon",
+  );
+  assert.deepEqual(
+    (await page(1, "", "fa", "prose")).map((r) => r.slug),
+    ["scale-2"],
+  );
+  assert.equal((await page(1, "", "ur", "prose")).length, 0);
+  await db.exec("reset role");
+});

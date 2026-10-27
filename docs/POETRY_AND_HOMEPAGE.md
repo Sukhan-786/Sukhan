@@ -41,6 +41,8 @@ The larger catalogue uses indexed, normalized literal substring search with `pg_
 
 Anonymous search uses a trigram-indexed projection containing only published works with published authors. Private trigger functions maintain it in the same transaction as text/publication edits; API roles cannot write it or invoke its maintenance functions. Original tables retain their RLS. This avoids the live timeout caused by normalizing full poem bodies below RLS security barriers. Changes to author or work publication immediately remove private texts from the projection as well as search results.
 
+The catalogue page RPC filters and sorts this public metadata first, then joins at most 25 source records (24 cards and one next-page probe). Script, genre and publication changes update the same metadata atomically. Deep catalogue pages therefore avoid materializing the entire archive through source-table RLS before applying pagination.
+
 `/sitemap-index.xml` lists bounded metadata-only sitemaps of 1,000 works/definitions each. `/sitemap.xml` is a small core sitemap. Robots references the index, excludes protected routes, and word-bank/search browse pages avoid thin-page indexing. Only reviewed dictionary detail pages are indexable. Search engines decide indexing and rankings.
 
 Google Tag Manager `GTM-MWXQC8X9` was released separately and detected by Google's installation test. This revision preserves its exclusion from protected studio/account routes. GA4 tags and Search Console verification are separate configuration steps.
