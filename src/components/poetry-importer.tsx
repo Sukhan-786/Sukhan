@@ -103,7 +103,7 @@ export function PoetryImporter({ initial }: { initial: PoetryProgress[] }) {
               new TextEncoder().encode(JSON.stringify(row)).length + 1;
             if (
               batch.length &&
-              (batch.length >= 200 || batchBytes + size > 750000)
+              (batch.length >= 30 || batchBytes + size > 220000)
             ) {
               await commit();
               if (paused.current) {
