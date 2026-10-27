@@ -3579,3 +3579,215 @@ footer .demo-banner {
 .dictionary-definition h4 {
   margin-block: 1rem 0.5rem;
 }
+/* ==========================================================================
+   Tactile Micro-Interactions & Fluid Click Animation System
+   ========================================================================== */
+
+/* 1. Global Touch Optimization: Eliminate mobile tap highlight box & tap delay */
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+
+:root {
+  --ease-spring: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* 2. Global Button & Link Tap Feedback */
+button,
+.button,
+.text-link,
+.directory-open {
+  transition: transform 0.12s var(--ease-spring), background 0.15s ease, color 0.15s ease, box-shadow 0.15s ease;
+  will-change: transform;
+}
+
+button:active,
+.button:active,
+.directory-open:active {
+  transform: scale(0.94) !important;
+}
+
+/* 3. Poetry Word Interactive Tap & Selection Glow */
+.poem .meaning-word {
+  display: inline-block;
+  cursor: pointer;
+  transition: transform 0.12s var(--ease-spring), background 0.15s ease, color 0.15s ease, box-shadow 0.15s ease;
+  will-change: transform;
+}
+
+.poem .meaning-word:active {
+  transform: scale(0.93) translateY(1px);
+  background: rgba(40, 43, 74, 0.12) !important;
+}
+
+.poem .meaning-word.selected-word {
+  background: #ebeef7 !important;
+  color: #1a1c32 !important;
+  border-radius: 4px;
+  box-shadow: 0 0 0 3px rgba(40, 43, 74, 0.1);
+  animation: wordPulse 1.8s ease-in-out infinite alternate;
+}
+
+@keyframes wordPulse {
+  0% { box-shadow: 0 0 0 2px rgba(40, 43, 74, 0.08); }
+  100% { box-shadow: 0 0 0 4px rgba(40, 43, 74, 0.16); }
+}
+
+/* 4. Reading Mode Pills & Script Tabs Click Motion */
+.script-tab-btn,
+.farsi-mode-pill {
+  transition: all 0.18s var(--ease-spring);
+  will-change: transform;
+}
+
+.script-tab-btn:active,
+.farsi-mode-pill:active {
+  transform: scale(0.93);
+}
+
+.script-tab-btn.active,
+.farsi-mode-pill.active {
+  box-shadow: 0 2px 8px rgba(40, 43, 74, 0.18);
+}
+
+/* Smooth crossfade when switching scripts or modes */
+.poem,
+.farsi-aligned-container,
+.farsi-translation-only {
+  animation: contentCrossfade 0.22s var(--ease-spring);
+}
+
+@keyframes contentCrossfade {
+  from { opacity: 0.4; transform: translateY(3px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* 5. Font Size Stepper Buttons (A- / A+) */
+.size-btn {
+  transition: all 0.12s var(--ease-spring);
+  border-radius: 6px;
+}
+
+.size-btn:active {
+  transform: scale(0.88);
+  background: #e2e5f0 !important;
+}
+
+/* 6. Copy & Share Tool Buttons Click Animation */
+.reader-tool-btn {
+  transition: all 0.15s var(--ease-spring);
+  border-radius: 8px;
+}
+
+.reader-tool-btn:active {
+  transform: scale(0.92);
+}
+
+.reader-tool-btn:active svg {
+  animation: iconBounce 0.25s var(--ease-bounce);
+}
+
+@keyframes iconBounce {
+  0% { transform: scale(1); }
+  50% { transform: scale(0.8); }
+  100% { transform: scale(1); }
+}
+
+/* 7. Dialog & Mobile Bottom Sheet Fluid Physics */
+.meaning-dialog {
+  animation: desktopModalIn 0.25s var(--ease-spring);
+}
+
+@keyframes desktopModalIn {
+  from {
+    opacity: 0;
+    transform: scale(0.96) translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.meaning-dialog::backdrop {
+  animation: backdropFadeIn 0.25s ease-out;
+}
+
+@keyframes backdropFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@media (max-width: 640px) {
+  .meaning-dialog {
+    animation: sheetSpringUp 0.32s cubic-bezier(0.32, 0.72, 0, 1) !important;
+  }
+
+  @keyframes sheetSpringUp {
+    from {
+      transform: translateY(100%);
+    }
+    to {
+      transform: translateY(0);
+    }
+  }
+}
+
+/* Close button micro-rotation on click */
+.modern-close-btn {
+  transition: transform 0.2s var(--ease-spring), background 0.15s ease;
+}
+
+.modern-close-btn:hover {
+  transform: rotate(90deg);
+}
+
+.modern-close-btn:active {
+  transform: scale(0.85) rotate(90deg);
+}
+
+/* 8. Toast Notification Spring Pop */
+.reader-toast {
+  animation: toastSpring 0.32s var(--ease-spring) forwards;
+}
+
+@keyframes toastSpring {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, 18px) scale(0.92);
+  }
+  100% {
+    opacity: 1;
+    transform: translate(-50%, 0) scale(1);
+  }
+}
+
+/* 9. Card Physical Depress on Click */
+.kalam-card,
+.artist-directory-row,
+.artist-card {
+  transition: transform 0.15s var(--ease-spring), box-shadow 0.15s ease, border-color 0.15s ease;
+  will-change: transform;
+}
+
+.kalam-card:active,
+.artist-directory-row:active,
+.artist-card:active {
+  transform: scale(0.985) translateY(0);
+}
+
+/* 10. Accessibility: Respect prefers-reduced-motion */
+@media (prefers-reduced-motion: reduce) {
+  button:active,
+  .button:active,
+  .meaning-word:active,
+  .kalam-card:active,
+  .artist-directory-row:active,
+  .meaning-dialog,
+  .reader-toast {
+    transform: none !important;
+    animation: none !important;
+    transition: none !important;
+  }
+}
