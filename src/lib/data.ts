@@ -41,7 +41,8 @@ export async function listKalam(
     };
   }
   const query = db
-    .rpc("search_library", {
+    .rpc("search_library_page", {
+      page_number: page,
       filter_language: filters.language || null,
       search_query: (filters.q || "").slice(0, 160),
       filter_form: filters.form || null,
@@ -50,8 +51,7 @@ export async function listKalam(
     })
     .select(selection)
     .order("created_at", { ascending: false })
-    .order("id")
-    .range((page - 1) * 24, page * 24);
+    .order("id");
   const { data, error } = await query;
   if (error)
     throw new Error("The library could not be loaded. Please try again.");
