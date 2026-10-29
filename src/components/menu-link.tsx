@@ -1,5 +1,5 @@
 "use client";
-import Link from "next/link";
+import Link from "@/components/animated-link";
 import type { ReactNode } from "react";
 export function MenuLink({
   href,
