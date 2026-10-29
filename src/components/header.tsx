@@ -1,3 +1,4 @@
+import LanguageDropdown from "@/components/language-dropdown";
 import Link from "@/components/animated-link";
 import { Icon } from "./icon";
 import { MenuLink } from "./menu-link";
@@ -70,7 +71,7 @@ export function Header() {
           />
         </form>
         <div className="header-tools">
-          <details className="reading-menu">
+          <LanguageDropdown />
             <summary
               className="header-locale"
               aria-label="Browse by reading script"
