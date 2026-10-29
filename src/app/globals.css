@@ -3791,3 +3791,137 @@ button:active,
     transition: none !important;
   }
 }
+/* Sukhan interaction animations */
+
+button,
+.button,
+summary {
+  transition:
+    transform 140ms ease,
+    opacity 140ms ease,
+    background-color 160ms ease,
+    color 160ms ease,
+    box-shadow 160ms ease;
+}
+
+a {
+  transition:
+    opacity 140ms ease,
+    color 160ms ease,
+    background-color 160ms ease;
+}
+
+/* Immediate feedback when clicked or tapped */
+button:not(:disabled):active,
+.button:active,
+summary:active {
+  transform: scale(0.97);
+}
+
+a:active {
+  opacity: 0.65;
+}
+
+button:disabled {
+  cursor: not-allowed;
+}
+
+/* Mouse hover feedback */
+@media (hover: hover) {
+  button:not(:disabled):hover,
+  .button:hover {
+    box-shadow: 0 4px 14px rgb(43 43 73 / 12%);
+  }
+
+  .site-header nav a:hover,
+  .mobile-bottom-nav a:hover {
+    background-color: #efebf6;
+  }
+}
+
+/* Real navigation loading indicator */
+.sukhan-link-loader {
+  display: inline-block;
+  flex: 0 0 10px;
+  width: 10px;
+  height: 10px;
+  margin-inline-start: 5px;
+  vertical-align: middle;
+  border: 2px solid currentColor;
+  border-inline-end-color: transparent;
+  border-radius: 50%;
+  opacity: 0;
+}
+
+.sukhan-link-loader.is-loading {
+  opacity: 1;
+  animation: sukhan-navigation-spin 650ms linear infinite;
+}
+
+@keyframes sukhan-navigation-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Dropdown opening animation */
+.site-header details[open] > nav,
+.site-header details[open] > .dropdown {
+  transform-origin: top center;
+  animation: sukhan-dropdown-enter 180ms ease-out;
+}
+
+@keyframes sukhan-dropdown-enter {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Smooth dropdown closing in supporting browsers */
+@supports (transition-behavior: allow-discrete) {
+  .site-header details::details-content {
+    opacity: 0;
+    transition:
+      opacity 180ms ease,
+      content-visibility 180ms allow-discrete;
+  }
+
+  .site-header details[open]::details-content {
+    opacity: 1;
+  }
+
+  @starting-style {
+    .site-header details[open]::details-content {
+      opacity: 0;
+    }
+  }
+}
+
+/* Respect visitors who prefer reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  button,
+  .button,
+  summary,
+  a,
+  .site-header details::details-content {
+    transition: none !important;
+  }
+
+  button:active,
+  .button:active,
+  summary:active {
+    transform: none;
+  }
+
+  .site-header details[open] > nav,
+  .site-header details[open] > .dropdown,
+  .sukhan-link-loader.is-loading {
+    animation: none !important;
+  }
+}
