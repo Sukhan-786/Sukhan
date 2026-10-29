@@ -1,4 +1,4 @@
-import Link from "next/link";
+import Link from "@/components/animated-link";
 import { Icon } from "./icon";
 import { MenuLink } from "./menu-link";
 const links = [
