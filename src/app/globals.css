@@ -3798,7 +3798,6 @@ button,
 summary {
   transition:
     transform 140ms ease,
-    opacity 140ms ease,
     background-color 160ms ease,
     color 160ms ease,
     box-shadow 160ms ease;

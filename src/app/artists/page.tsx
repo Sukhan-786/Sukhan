@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { listArtists } from "@/lib/data";
-import { ArtistDirectorySearch } from "@/components/artist-directory-search";
+import { ArtistDirectorySearch } from "./artist-directory-search";
 
 export const metadata: Metadata = {
   title: "Poets & artists",
